@@ -1,0 +1,35 @@
+# llms.txt — The soft War
+
+## Fichiers critiques
+- CLAUDE.md — règles et structure du projet
+- MEMORY.md — mémoire vivante (index, décisions, gotchas, sessions). À LIRE EN PREMIER.
+- AGENTS.md — instructions cross-IDE (renvoie au CLAUDE.md)
+- README.md — pitch + setup local
+- .env.example — variables d'env requises
+
+## Stack
+- Next.js 16 App Router + TypeScript + Tailwind 4
+- Drizzle ORM + Postgres
+- Lucia + magic link (Resend)
+- BullMQ + Redis + worker Node.js
+- Mastra (orchestration LLM TypeScript-first)
+- Anthropic SDK (avec prompt caching)
+- mammoth + pdf-parse + fountain-js (extraction texte)
+- MDX + SSR Next.js (dashboard render)
+
+## Dossiers
+- src/app/ — routes Next.js (admin, public /p/[slug], api)
+- src/lib/{db,auth,queue,mastra,utils}/ — clients infra
+- src/modules/ — 10 modules pipeline indépendants
+- worker/ — worker BullMQ standalone
+- drizzle/ — migrations DB
+
+## Services Railway
+- the-soft-war-web (Next.js)
+- the-soft-war-worker (Node worker)
+- the-soft-war-redis (Redis)
+- the-soft-war-db (Postgres)
+
+## Sources d'inspiration (manuel)
+- C:/dev/claude/oscardcstudio/Nothing_But_Blue_Sky/notes/research/script_to_dev_app.md — deepsearch archi
+- C:/dev/claude/oscardcstudio/Nothing_But_Blue_Sky/notes/{worldbuilding,teaser_pool,entities,fragments,endings,refs}.md — pipeline manuel à automatiser
