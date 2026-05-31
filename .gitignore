@@ -56,6 +56,11 @@ Thumbs.db
 # Local data
 /uploads/
 /tmp/
+/data/
+
+# Generated project bibles are committed (output of Claude Code analyses).
+# If you want them gitignored too, uncomment :
+# /projects/
 
 # Drizzle local journal
 drizzle/meta/_journal.json.bak
