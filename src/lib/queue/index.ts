@@ -2,37 +2,44 @@ import { Queue, Worker, type Processor, QueueEvents, type ConnectionOptions } fr
 import IORedis from "ioredis";
 import type { ModuleName } from "@/lib/db/schema";
 
-const redisUrl = process.env.REDIS_URL;
-if (!redisUrl) {
-  throw new Error("REDIS_URL is not set");
+/**
+ * Lazy BullMQ connection options.
+ * Doesn't throw at import time so `next build` works without REDIS_URL set.
+ */
+export function getBullConnection(): ConnectionOptions {
+  const redisUrl = process.env.REDIS_URL;
+  if (!redisUrl) {
+    throw new Error("REDIS_URL is not set");
+  }
+  return {
+    url: redisUrl,
+    maxRetriesPerRequest: null,
+    enableReadyCheck: false,
+  };
 }
 
 /**
- * BullMQ connection options (passed to Queue/Worker — BullMQ instantiates its own Redis).
- * We don't pass a shared IORedis instance because BullMQ ships a nested ioredis copy
- * and the types diverge between the two.
- */
-export const bullConnection: ConnectionOptions = {
-  url: redisUrl,
-  maxRetriesPerRequest: null,
-  enableReadyCheck: false,
-};
-
-/**
- * Standalone IORedis client — used only for healthchecks and ad-hoc commands
- * (NOT for BullMQ, which has its own connection).
+ * Standalone IORedis client (lazy) — used only for healthchecks.
  */
 declare global {
   // eslint-disable-next-line no-var
   var __redis: IORedis | undefined;
 }
 
-export const connection: IORedis = globalThis.__redis ?? new IORedis(redisUrl, {
-  maxRetriesPerRequest: 3,
-  lazyConnect: true,
-});
-if (process.env.NODE_ENV !== "production") {
-  globalThis.__redis = connection;
+export function getRedis(): IORedis {
+  if (globalThis.__redis) return globalThis.__redis;
+  const redisUrl = process.env.REDIS_URL;
+  if (!redisUrl) {
+    throw new Error("REDIS_URL is not set");
+  }
+  const client = new IORedis(redisUrl, {
+    maxRetriesPerRequest: 3,
+    lazyConnect: true,
+  });
+  if (process.env.NODE_ENV !== "production") {
+    globalThis.__redis = client;
+  }
+  return client;
 }
 
 export const QUEUE_NAME = "pipeline";
@@ -42,7 +49,6 @@ export type PipelineJob = {
   module: ModuleName;
 };
 
-// Producer (lazy)
 declare global {
   // eslint-disable-next-line no-var
   var __pipelineQueue: Queue<PipelineJob> | undefined;
@@ -51,18 +57,18 @@ declare global {
 export function getPipelineQueue(): Queue<PipelineJob> {
   const existing = globalThis.__pipelineQueue;
   if (existing) return existing;
-  const queue = new Queue<PipelineJob>(QUEUE_NAME, { connection: bullConnection });
+  const queue = new Queue<PipelineJob>(QUEUE_NAME, { connection: getBullConnection() });
   globalThis.__pipelineQueue = queue;
   return queue;
 }
 
 export function getQueueEvents(): QueueEvents {
-  return new QueueEvents(QUEUE_NAME, { connection: bullConnection });
+  return new QueueEvents(QUEUE_NAME, { connection: getBullConnection() });
 }
 
 export function createPipelineWorker(processor: Processor<PipelineJob>) {
   return new Worker<PipelineJob>(QUEUE_NAME, processor, {
-    connection: bullConnection,
+    connection: getBullConnection(),
     concurrency: 4,
     autorun: true,
   });

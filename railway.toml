@@ -1,0 +1,12 @@
+# Railway build config — override default `npm ci` (which fails on Windows-generated lockfiles
+# missing Linux-specific optionalDependencies like @emnapi/core).
+# We use `npm install` instead so npm resolves the optionals on the build host.
+
+[build]
+builder = "RAILPACK"
+buildCommand = "npm install --no-audit --no-fund && npm run build"
+
+[deploy]
+startCommand = "npm start"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3

@@ -35,8 +35,8 @@ async function pingRedis(): Promise<HealthResult["redis"]> {
     if (!process.env.REDIS_URL) {
       return { ok: false, latencyMs: null, error: "REDIS_URL not set" };
     }
-    const { connection } = await import("@/lib/queue");
-    const pong = await connection.ping();
+    const { getRedis } = await import("@/lib/queue");
+    const pong = await getRedis().ping();
     if (pong !== "PONG") throw new Error(`unexpected response: ${pong}`);
     return { ok: true, latencyMs: Date.now() - start };
   } catch (err) {
