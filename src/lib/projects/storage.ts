@@ -2,8 +2,11 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { nanoid } from "nanoid";
 
-const UPLOADS_DIR = path.join(process.cwd(), "uploads");
-const PROJECTS_DIR = path.join(process.cwd(), "projects");
+// On Railway, DATA_DIR points to the mounted volume (/data) so uploads survive
+// redeploys. Locally, it defaults to the project root.
+const DATA_ROOT = process.env.DATA_DIR ?? process.cwd();
+const UPLOADS_DIR = path.join(DATA_ROOT, "uploads");
+const PROJECTS_DIR = path.join(DATA_ROOT, "projects");
 
 const ALLOWED_EXTS = [".docx", ".pdf", ".fountain", ".txt"] as const;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB

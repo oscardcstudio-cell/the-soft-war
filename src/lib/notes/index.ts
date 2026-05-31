@@ -4,7 +4,9 @@ import type { NotesStore } from "./types";
 
 export type { Note, NotesStore } from "./types";
 
-const DATA_DIR = path.join(process.cwd(), "data");
+// On Railway, DATA_DIR points to the mounted volume (/data) so notes survive
+// redeploys. Locally, defaults to ./data.
+const DATA_DIR = process.env.DATA_DIR ?? path.join(process.cwd(), "data");
 const NOTES_FILE = path.join(DATA_DIR, "notes.json");
 
 // Lazy singleton — file store only opens at first call.
