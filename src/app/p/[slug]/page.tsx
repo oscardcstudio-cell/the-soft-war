@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getProjectResults, listProjects } from "@/lib/projects/storage";
+import { getProjectResults, listProjects, hasRichDashboard } from "@/lib/projects/storage";
 import MdContent from "./md-content";
 import "./dashboard.css";
 
@@ -46,6 +46,24 @@ export default async function ProjectPage({
   const projects = await listProjects();
   const project = projects.find((p) => p.projectId === slug);
   if (!project) return notFound();
+
+  // If a rich dashboard.html exists (produced by meta-creation / Claude Code),
+  // serve it full-screen in an iframe — same identity as the NBS dashboard.
+  if (await hasRichDashboard(slug)) {
+    return (
+      <iframe
+        src={`/api/dashboard/${slug}`}
+        title={String(project.meta?.originalFilename ?? slug)}
+        style={{
+          position: "fixed",
+          inset: 0,
+          width: "100%",
+          height: "100dvh",
+          border: "none",
+        }}
+      />
+    );
+  }
 
   const results = sortModules(await getProjectResults(slug));
   const title = String(project.meta?.originalFilename ?? slug);

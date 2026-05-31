@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Birds — dossier de développement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+@layer reset, tokens, base, layout, components, widgets, overrides;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  img { max-width: 100%; display: block; }
+  ul, ol { list-style: none; }
+  button { cursor: pointer; border: none; background: none; font: inherit; }
+  a { color: inherit; }
+}
+
+@layer tokens {
+  :root {
+    /* Primitifs */
+    --sky-50:  #f0f7ff;
+    --sky-100: #e0f0ff;
+    --sky-200: #baddff;
+    --sky-400: #7ab8f5;
+    --sky-600: #3d8cd6;
+    --sky-800: #1a4f82;
+    --sky-900: #0d2a47;
+
+    --slate-50:  #f8f9fa;
+    --slate-100: #f1f3f5;
+    --slate-200: #e9ecef;
+    --slate-300: #dee2e6;
+    --slate-400: #adb5bd;
+    --slate-500: #6c757d;
+    --slate-600: #495057;
+    --slate-700: #343a40;
+    --slate-800: #212529;
+    --slate-900: #0f1115;
+
+    --amber-500: #f59e0b;
+    --amber-200: #fde68a;
+    --rose-600:  #e11d48;
+    --emerald-600: #059669;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
+
+    --radius-sm: 3px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+
+    /* Sémantiques */
+    --color-bg:           #0c1219;
+    --color-bg-alt:       #111820;
+    --color-surface:      #16202c;
+    --color-surface-2:    #1c2b3a;
+    --color-border:       #243447;
+    --color-border-light: #1e2f3f;
+
+    --color-text-primary:   #dce8f0;
+    --color-text-secondary: #7fa8c4;
+    --color-text-muted:     #4a6e88;
+
+    --color-accent:   #7ab8f5;   /* sky-400 */
+    --color-accent-2: #a8d4ff;
+    --color-gold:     #c9a95c;   /* pellicule, sépia */
+    --color-gold-dim: #7a6230;
+
+    --color-bad:  #e05a6b;
+    --color-good: #4aac82;
+    --color-warn: #d4a44a;
+
+    --skeleton-base:  #1c2b3a;
+    --skeleton-shine: #243447;
+
+    /* Typo */
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-mono:  'DM Mono', 'Courier New', monospace;
+  }
+}
+
+@layer base {
+  html {
+    font-size: 16px;
+    font-family: var(--font-serif);
+    font-variant-numeric: tabular-nums;
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+  }
+
+  h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 300; letter-spacing: -0.02em; line-height: 1.1; }
+  h2 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); font-weight: 400; letter-spacing: 0.01em; }
+  h3 { font-size: 1.1rem; font-weight: 600; }
+  p  { font-size: 1.0625rem; line-height: 1.7; }
+
+  a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  a:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  ::selection { background: var(--sky-800); color: var(--sky-50); }
+
+  /* Scrollbar subtile */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--color-bg); }
+  ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+}
+
+@layer layout {
+  /* Nav latérale sticky — desktop */
+  .site-wrapper {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    grid-template-areas: "nav main";
+    min-height: 100dvh;
+  }
+
+  .site-nav {
+    grid-area: nav;
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    overflow-y: auto;
+    border-right: 1px solid var(--color-border);
+    padding: var(--space-8) var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .site-main {
+    grid-area: main;
+    min-width: 0;
+  }
+
+  .section {
+    padding: var(--space-12) var(--space-8);
+    border-bottom: 1px solid var(--color-border-light);
+    max-width: 900px;
+  }
+
+  .section:last-child { border-bottom: none; }
+
+  /* Grilles */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .card-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-4);
+  }
+
+  /* Mobile */
+  @media (max-width: 720px) {
+    .site-wrapper {
+      grid-template-columns: 1fr;
+      grid-template-areas: "nav" "main";
+    }
+    .site-nav {
+      position: static;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--color-border);
+      flex-direction: row;
+      flex-wrap: wrap;
+      padding: var(--space-4);
+      gap: var(--space-2);
+    }
+    .nav-brand { display: none; }
+    .nav-links { flex-direction: row; flex-wrap: wrap; gap: var(--space-2); }
+    .section { padding: var(--space-8) var(--space-4); }
+  }
+}
+
+@layer components {
+  /* Navigation */
+  .nav-brand {
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    line-height: 1.4;
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .nav-links a {
+    font-size: 0.8125rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    border-left: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-links a:hover,
+  .nav-links a:focus-visible {
+    color: var(--color-accent);
+    border-left-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+    text-decoration: none;
+  }
+
+  .nav-links a.active {
+    color: var(--color-accent);
+    border-left-color: var(--color-accent);
+  }
+
+  /* Section header */
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+  }
+
+  /* Card */
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--color-accent);
+    background: var(--color-surface-2);
+  }
+
+  .card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    color: var(--color-accent);
+    margin-bottom: var(--space-2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .card-body {
+    font-size: 0.9375rem;
+    color: var(--color-text-primary);
+    line-height: 1.6;
+  }
+
+  .card-meta {
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    margin-top: var(--space-3);
+  }
+
+  /* Badge statut */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px var(--space-2);
+    border-radius: 2px;
+    border: 1px solid;
+  }
+
+  .badge-active {
+    color: var(--color-warn);
+    border-color: var(--color-gold-dim);
+    background: color-mix(in srgb, var(--color-gold) 8%, transparent);
+  }
+
+  .badge-open {
+    color: var(--color-text-muted);
+    border-color: var(--color-border);
+    background: transparent;
+  }
+
+  .badge-refused {
+    color: var(--color-bad);
+    border-color: color-mix(in srgb, var(--color-bad) 30%, transparent);
+    background: color-mix(in srgb, var(--color-bad) 6%, transparent);
+  }
+
+  /* Blockquote / fragment littéraire */
+  .fragment {
+    border-left: 2px solid var(--color-gold-dim);
+    padding: var(--space-4) var(--space-5);
+    background: color-mix(in srgb, var(--color-gold) 4%, var(--color-surface));
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    font-style: italic;
+    font-size: 1.0625rem;
+    color: var(--color-text-primary);
+    line-height: 1.75;
+  }
+
+  .fragment cite {
+    display: block;
+    margin-top: var(--space-3);
+    font-style: normal;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--color-text-muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* Accordion */
+  details {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  details + details { margin-top: var(--space-2); }
+
+  summary {
+    padding: var(--space-4) var(--space-5);
+    cursor: pointer;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    list-style: none;
+    min-height: 48px;
+    user-select: none;
+    background: var(--color-surface);
+    transition: background 0.15s;
+  }
+
+  summary::-webkit-details-marker { display: none; }
+
+  summary:hover {
+    background: var(--color-surface-2);
+  }
+
+  summary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+
+  .summary-arrow {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  details[open] .summary-arrow { transform: rotate(180deg); }
+
+  .details-body {
+    padding: var(--space-5);
+    background: var(--color-bg-alt);
+    border-top: 1px solid var(--color-border);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+  }
+
+  /* Loi physique — tableau saisons */
+  .season-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+
+  .season-card {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid;
+  }
+
+  .season-ete {
+    border-color: color-mix(in srgb, var(--color-bad) 40%, transparent);
+    background: color-mix(in srgb, var(--color-bad) 6%, transparent);
+  }
+
+  .season-hiver {
+    border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+    background: color-mix(in srgb, var(--color-accent) 6%, transparent);
+  }
+
+  .season-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-2);
+  }
+
+  .season-ete .season-label { color: var(--color-bad); }
+  .season-hiver .season-label { color: var(--color-accent); }
+
+  .season-value {
+    font-size: 1.5rem;
+    font-weight: 300;
+    line-height: 1.2;
+    margin-bottom: var(--space-2);
+  }
+
+  /* Personnages */
+  .character-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: var(--space-2);
+    transition: border-color 0.2s;
+  }
+
+  .character-card:hover { border-color: var(--color-gold-dim); }
+
+  .character-name {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--color-text-primary);
+  }
+
+  .character-role {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .character-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Stats Tufte */
+  .stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    padding: var(--space-4) 0;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stat-value {
+    font-size: 2.25rem;
+    font-weight: 300;
+    color: var(--color-text-primary);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  /* Pipeline */
+  .pipeline-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+  .pipeline-step {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-2) var(--space-3);
+    white-space: nowrap;
+  }
+
+  .pipeline-arrow {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    flex-shrink: 0;
+  }
+
+  /* Pool tag */
+  .pool-bloc {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 25%, transparent);
+    border-radius: 2px;
+    padding: 1px 5px;
+  }
+
+  /* Ref list */
+  .ref-entry {
+    display: flex;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--color-border-light);
+    align-items: flex-start;
+  }
+
+  .ref-entry:last-child { border-bottom: none; }
+
+  .ref-type {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    padding-top: 3px;
+    flex-shrink: 0;
+    min-width: 50px;
+  }
+
+  .ref-body { flex: 1; }
+
+  .ref-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 2px;
+  }
+
+  .ref-note {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  /* Gravity bar (data viz Tufte) */
+  .gravity-bar-wrap {
+    margin-top: var(--space-4);
+  }
+
+  .gravity-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-1);
+  }
+
+  .gravity-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, var(--color-accent), var(--color-text-muted) 50%, var(--color-bad));
+    position: relative;
+  }
+
+  .gravity-tick {
+    position: absolute;
+    top: -4px;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 14px;
+    background: var(--color-text-primary);
+    opacity: 0.5;
+  }
+
+  /* Source link */
+  .src-link {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--color-accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+
+  .src-link:hover { border-color: var(--color-accent); text-decoration: none; }
+
+  /* Hero */
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--color-gold-dim);
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: -0.03em;
+    line-height: 1.0;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .hero-alt {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-6);
+    letter-spacing: 0.04em;
+  }
+
+  .hero-pitch {
+    font-size: clamp(1rem, 2.5vw, 1.3125rem);
+    color: var(--color-text-secondary);
+    max-width: 56ch;
+    line-height: 1.65;
+    margin-bottom: var(--space-6);
+    font-style: italic;
+  }
+
+  /* Gravity float animation — discret, respectueux */
+  @keyframes float-gentle {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+  }
+
+  .float-element {
+    display: inline-block;
+    animation: float-gentle 6s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .float-element { animation: none; }
+  }
+
+  /* Leaf falling upward on hover (fin CSS, non-intrusif) */
+  @keyframes leaf-up {
+    0%   { opacity: 0; transform: translateY(0) rotate(0deg); }
+    20%  { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-60px) rotate(35deg); }
+  }
+
+  .leaf-hover-wrap { position: relative; display: inline-block; }
+  .leaf-hover-wrap::after {
+    content: '◌';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    font-size: 0.5rem;
+    color: var(--color-accent);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .leaf-hover-wrap:hover::after {
+    animation: leaf-up 1.2s ease-out forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .leaf-hover-wrap:hover::after { animation: none; }
+  }
+
+  /* Voix off mis en avant */
+  .voix-off {
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-text-primary);
+    line-height: 1.55;
+    letter-spacing: 0.01em;
+    padding: var(--space-6) var(--space-8);
+    border-left: 1px solid var(--color-gold-dim);
+    position: relative;
+  }
+
+  .voix-off::before {
+    content: '"';
+    position: absolute;
+    left: var(--space-3);
+    top: var(--space-4);
+    font-size: 3rem;
+    color: var(--color-gold-dim);
+    line-height: 1;
+    font-weight: 300;
+  }
+}
+
+/* IntersectionObserver hook pour nav active */
+</style>
+</head>
+
+<body>
+<div class="site-wrapper">
+
+<!-- NAV LATÉRALE -->
+<nav class="site-nav" aria-label="Sections du dossier">
+  <div class="nav-brand">
+    The Birds<br>— dossier
+  </div>
+  <ul class="nav-links" role="list">
+    <li><a href="#hero">Présentation</a></li>
+    <li><a href="#synopsis">Synopsis</a></li>
+    <li><a href="#monde">Le monde</a></li>
+    <li><a href="#societe">Société</a></li>
+    <li><a href="#personnages">Personnages</a></li>
+    <li><a href="#lieux">Lieux</a></li>
+    <li><a href="#teaser">Pool teaser</a></li>
+    <li><a href="#fragments">Fragments</a></li>
+    <li><a href="#refs">Références</a></li>
+    <li><a href="#stats">Stats projet</a></li>
+  </ul>
+</nav>
+
+<!-- MAIN -->
+<main class="site-main">
+
+  <!-- ───────────── HERO ───────────── -->
+  <section class="section" id="hero" style="padding-top: var(--space-16);">
+    <div class="hero-eyebrow">Film classique de 1963</div>
+    <h1 class="hero-title">
+      <span class="leaf-hover-wrap">The Birds</span>
+    </h1>
+    <p class="hero-alt">Alfred Hitchcock — 1963 / Evan Hunter</p>
+    <p class="hero-pitch">
+      Les oiseaux se mettent à attaquer les humains sans raison explicable. Aucune explication scientifique, aucun coupable désigné, aucune résolution. Un film sur l'inexplicable qui soustrait plutôt qu'il n'ajoute.
+    </p>
+    <div style="margin-bottom: var(--space-6);">
+      <span class="badge badge-active">Suspense</span>
+      &nbsp;
+      <span class="badge badge-active">Eco-thriller</span>
+      &nbsp;
+      <span class="badge badge-open">1963</span>
+    </div>
+
+    <blockquote class="voix-off" style="max-width: 52ch;">
+      It's the end of the world.
+      <footer style="display:block; margin-top: var(--space-4); font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-text-muted); font-style: normal;">— L'ivrogne au Tides · <a class="src-link" href="fragments.md">fragments.md</a></footer>
+    </blockquote>
+
+    <!-- Axe San Francisco / Bodega Bay -->
+    <div style="margin-top: var(--space-8);">
+      <div class="season-grid" style="margin-bottom: var(--space-6);">
+        <div class="season-card season-hiver">
+          <div class="season-label">San Francisco</div>
+          <div class="season-value">Urbain</div>
+          <p style="font-size: 0.875rem; color: var(--color-text-secondary);">Mondain, sûr, pet shop, séduction, liberté. Mitch rencontre Melanie. Elle suit pour le jeu.</p>
+        </div>
+        <div class="season-card season-ete">
+          <div class="season-label">Bodega Bay</div>
+          <div class="season-value">Rural</div>
+          <p style="font-size: 0.875rem; color: var(--color-text-secondary);">Isolé, étranger, côtier. Les attaques commencent. Claustration progressive. Barricade finale.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── SYNOPSIS ───────────── -->
+  <section class="section" id="synopsis">
+    <p class="section-label">Synopsis</p>
+    <h2 style="margin-bottom: var(--space-5);">L'histoire</h2>
+
+    <div class="fragment" style="margin-bottom: var(--space-6);">
+      It's the end of the world.
+      <cite>L'ivrogne au Tides · <a class="src-link" href="fragments.md">fragments.md</a></cite>
+    </div>
+
+    <p style="color: var(--color-text-secondary); margin-bottom: var(--space-4); max-width: 64ch;">
+      Melanie Daniels, jeune femme riche de San Francisco, suit Mitch Brenner jusqu'à <strong>Bodega Bay</strong> avec deux lovebirds en cadeau. Elle cherche à prolonger un jeu de séduction. Les oiseaux se mettent à attaquer.
+    </p>
+    <p style="color: var(--color-text-secondary); margin-bottom: var(--space-4); max-width: 64ch;">
+      Aucune explication n'est donnée. L'autorité refuse de croire. La communauté se referme. Melanie devient le bouc émissaire. Annie Hayworth, l'ex de Mitch, se sacrifie pour Cathy. La mère Lydia projette sa peur sur cette étrangère.
+    </p>
+    <p style="color: var(--color-text-secondary); max-width: 64ch;">
+      Climax : attaque par la cheminée. Melanie monte au grenier, catatonique après l'essaim final. Au matin, la famille fuit dans une voiture. Les oiseaux recouvrent la terre, silencieux. Pas de "The End" — Hitchcock refuse la catharsis.
+    </p>
+    <p style="margin-top: var(--space-3); font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-muted);">
+      Sources : <a class="src-link" href="worldbuilding.md">worldbuilding.md</a> · <a class="src-link" href="characters.md">characters.md</a> · <a class="src-link" href="teaser_pool.md">teaser_pool.md</a>
+    </p>
+  </section>
+
+  <!-- ───────────── LE MONDE ───────────── -->
+  <section class="section" id="monde">
+    <p class="section-label">Worldbuilding</p>
+    <h2 style="margin-bottom: var(--space-6);">La loi physique fondatrice</h2>
+
+    <p style="color: var(--color-text-secondary); margin-bottom: var(--space-6); max-width: 64ch;">
+      <strong>Notre monde, sauf que les oiseaux attaquent.</strong> Pas d'explication scientifique. Pas d'origine surnaturelle nommée. Pas de méchant. Le dérèglement est inexpliqué et inexplicable — c'est le cœur du dispositif Hitchcock.
+    </p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-4);">
+
+      <details>
+        <summary>Géographie <span class="summary-arrow">▾</span></summary>
+        <div class="details-body">
+          <ul style="display: flex; flex-direction: column; gap: var(--space-2);">
+            <li><strong>San Francisco</strong> : ouverture, ville moderne, pet shop, milieu mondain</li>
+            <li><strong>Bodega Bay</strong> : village côtier californien, communauté restreinte, isolement progressif</li>
+            <li><strong>Maison Brenner</strong> : ferme isolée, accessible en bateau ou par route</li>
+            <li><strong>Cottage d'Annie</strong> : refuge intermédiaire, loin du village</li>
+            <li><strong>Tides restaurant</strong> : centre social où la communauté confronte l'événement</li>
+            <li><strong>École</strong> : lieu d'attaque iconique (corbeaux sur le portique)</li>
+          </ul>
+          <p style="margin-top: var(--space-3); font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-text-muted);">→ <a class="src-link" href="locations.md">locations.md</a></p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Atmosphère <span class="summary-arrow">▾</span></summary>
+        <div class="details-body">
+          <ul style="display: flex; flex-direction: column; gap: var(--space-2);">
+            <li><strong>Pas de musique</strong> non-diégétique — seuls cris d'oiseaux et silence</li>
+            <li><strong>Ciel toujours présent</strong> — on regarde, on guette, on craint</li>
+            <li><strong>Brouillard et lumière grise</strong> sur Bodega Bay</li>
+            <li><strong>Temps suspendu</strong> — pas de "fin", le film s'arrête au milieu</li>
+            <li><strong>Dégradation de l'éclairage</strong> au fil des attaques</li>
+          </ul>
+          <p style="margin-top: var(--space-3); font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-text-muted);">→ <a class="src-link" href="worldbuilding.md">worldbuilding.md §4</a></p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Narratif — la loi de l'inexpliqué <span class="summary-arrow">▾</span></summary>
+        <div class="details-body">
+          <ul style="display: flex; flex-direction: column; gap: var(--space-2);">
+            <li><strong>Aucune justification</strong> narrative n'est donnée</li>
+            <li><strong>Aucun coupable</strong> n'est désigné</li>
+            <li><strong>Aucune résolution</strong> n'arrive</li>
+            <li><strong>L'autorité refuse</strong> de croire (police, ornithologue, fermier voisin)</li>
+            <li><strong>Le film soustrait</strong> plutôt qu'il n'ajoute des explications</li>
+          </ul>
+          <p style="margin-top: var(--space-3); font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-text-muted);">→ <a class="src-link" href="worldbuilding.md">worldbuilding.md §5</a></p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Cosmologie — rumeur de châtiment <span class="summary-arrow">▾</span></summary>
+        <div class="details-body">
+          <p>Mrs. Bundy mentionne que les oiseaux du monde entier pourraient se révolter — hypothèse théorique puis rejetée. Le film pose la question puis l'abandonne.</p>
+          <p style="margin-top: var(--space-3);">Pas de système cosmologique explicite. L'idée flotte, **inexpliquée**.</p>
+          <p style="margin-top: var(--space-3); font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-text-muted);">→ <a class="src-link" href="worldbuilding.md">worldbuilding.md §6</a></p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Faune — les oiseaux <span class="summary-arrow">▾</span></summary>
+        <div class="details-body">
+          <ul style="display: flex; flex-direction: column; gap: var(--space-2);">
+            <li><strong>Mouettes, corbeaux, moineaux, étourneaux</strong> — les espèces principales</li>
+            <li><strong>Pas de prédateurs naturels</strong> (rapaces) — ce sont les plus innocents qui attaquent</li>
+            <li><strong>Lovebirds</strong> (inséparables) dans la cage — fil rouge symbolique, eux ne se révoltent pas</li>
+            <li><strong>Escalade de l'échelle</strong> : oiseau isolé → groupe → essaim</li>
+          </ul>
+          <p style="margin-top: var(--space-3); font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-text-muted);">→ <a class="src-link" href="worldbuilding.md">worldbuilding.md §8</a></p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Paradoxes ouverts <span class="summary-arrow">▾</span></summary>
+        <div class="details-body">
+          <ul style="display: flex; flex-direction: column; gap: var(--space-2);">
+            <li>Les **lovebirds** dans la cage : pourquoi eux n'attaquent-ils pas ?</li>
+            <li>Coïncidence ou causalité entre l'arrivée de Melanie et le début des attaques ?</li>
+            <li>Les attaques s'arrêtent-elles à Bodega Bay ou s'étendent-elles ?</li>
+            <li>Que devient le mariage potentiel Mitch / Melanie ?</li>
+            <li>La mère Lydia accepte-t-elle Melanie à la fin (regard ambigu) ?</li>
+          </ul>
+          <p style="margin-top: var(--space-3); font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-text-muted);">→ <a class="src-link" href="worldbuilding.md">worldbuilding.md §10</a></p>
+        </div>
+      </details>
+
+    </div>
+  </section>
+
+  <!-- ───────────── SOCIÉTÉ ───────────── -->
+  <section class="section" id="societe">
+    <p class="section-label">Hiérarchie</p>
+    <h2 style="margin-bottom: var(--space-5);">Classes sociales</h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-6);">
+      <div class="card">
+        <div class="card-title" style="color: var(--color-gold);">Bourgeoisie</div>
+        <div class="card-body">
+          <ul style="display: flex; flex-direction: column; gap: var(--space-2); font-size: 0.875rem; color: var(--color-text-secondary);">
+            <li><strong>Melanie Daniels</strong> — fille d'éditeur SF, riche, indépendante, joueuse</li>
+            <li><strong>Mitch Brenner</strong> — avocat, week-ends à Bodega, pragmatique</li>
+            <li><strong>Lydia Brenner</strong> — veuve, possessive, propriétaire foncière</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color: var(--color-accent);">Petit bourgeois / Ouvrier</div>
+        <div class="card-body">
+          <ul style="display: flex; flex-direction: column; gap: var(--space-2); font-size: 0.875rem; color: var(--color-text-secondary);">
+            <li><strong>Annie Hayworth</strong> — institutrice, ex de Mitch, sacrifiée</li>
+            <li><strong>Dan Fawcett</strong> — fermier, première victime visible</li>
+            <li><strong>Autorité</strong> — sheriff, adjoint, all refuse de croire</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="fragment" style="margin-bottom: var(--space-5);">
+      You're the cause of all this!
+      <cite>Mère hystérique au Tides · <a class="src-link" href="fragments.md">fragments.md</a></cite>
+    </div>
+  </section>
+
+  <!-- ───────────── PERSONNAGES ───────────── -->
+  <section class="section" id="personnages">
+    <p class="section-label">Personnages</p>
+    <h2 style="margin-bottom: var(--space-6);">11 entités</h2>
+
+    <div class="card-grid">
+      <div class="character-card">
+        <div class="character-name">Melanie Daniels</div>
+        <div class="character-role">Protagoniste</div>
+        <div class="character-desc">Jeune femme riche de San Francisco, fille d'éditeur. Arc : de la séduction frivole à la vulnérabilité absolue. Catatonique après l'attaque au grenier. Bouc émissaire final.</div>
+        <div class="card-meta"><a class="src-link" href="characters.md">characters.md</a></div>
+      </div>
+      <div class="character-card">
+        <div class="character-name">Mitch Brenner</div>
+        <div class="character-role">Co-protagoniste / love interest</div>
+        <div class="character-desc">Avocat à San Francisco, week-ends à Bodega Bay. Veuf de père. Vit avec mère possessive et petite sœur. Pragmatique, protecteur, peu démonstratif. Leader des fuite finale.</div>
+        <div class="card-meta"><a class="src-link" href="characters.md">characters.md</a></div>
+      </div>
+      <div class="character-card">
+        <div class="character-name">Lydia Brenner</div>
+        <div class="character-role">Mère possessive</div>
+        <div class="character-desc">Veuve, méfiante envers Melanie. Découvre le cadavre de Dan Fawcett (yeux arrachés) — choc qui fragilise. Arc : acceptation ambigu à la fin. Regard final envers Melanie.</div>
+        <div class="card-meta"><a class="src-link" href="characters.md">characters.md</a></div>
+      </div>
+      <div class="character-card">
+        <div class="character-name">Cathy Brenner</div>
+        <div class="character-role">Petite sœur (~11 ans)</div>
+        <div class="character-desc">Innocence enfantine. Cible des attaques à l'anniversaire et à l'école. Annie se sacrifie pour la protéger. Reste enfant malgré le chaos.</div>
+        <div class="card-meta"><a class="src-link" href="characters.md">characters.md</a></div>
+      </div>
+      <div class="character-card">
+        <div class="character-name">Annie Hayworth</div>
+        <div class="character-role">Institutrice / sacrifice</div>
+        <div class="character-desc">Ex de Mitch, restée à Bodega pour rester près de lui. Personnage de sacrifice tragique. Meurt en protégeant Cathy. Doublure rivale discrète.</div>
+        <div class="card-meta"><a class="src-link" href="characters.md">characters.md</a></div>
+      </div>
+      <div class="character-card">
+        <div class="character-name">Mrs. Bundy</div>
+        <div class="character-role">Ornithologue</div>
+        <div class="character-desc">Refuse l'attaque massive au Tides. Représente le savoir académique en déni. Argumente posément face à l'inexplicable.</div>
+        <div class="card-meta"><a class="src-link" href="characters.md">characters.md</a></div>
+      </div>
+      <div class="character-card">
+        <div class="character-name">Dan Fawcett</div>
+        <div class="character-role">Fermier / première victime</div>
+        <div class="character-desc">Première mort visible. Découvert par Lydia avec yeux arrachés. Moment-pivot de réalité des attaques.</div>
+        <div class="card-meta"><a class="src-link" href="characters.md">characters.md</a></div>
+      </div>
+      <div class="character-card">
+        <div class="character-name">Deputy Al Malone</div>
+        <div class="character-role">Autorité aveugle</div>
+        <div class="character-desc">Adjoint du shérif. Refuse de croire les premières attaques. Représente l'autorité impuissante face à l'inexplicable.</div>
+        <div class="card-meta"><a class="src-link" href="characters.md">characters.md</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── LIEUX ───────────── -->
+  <section class="section" id="lieux">
+    <p class="section-label">Géographie</p>
+    <h2 style="margin-bottom: var(--space-5);">10 lieux structurants</h2>
+
+    <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+      <div class="card">
+        <div class="card-title">Pet shop — San Francisco</div>
+        <div class="card-body" style="font-size: 0.875rem;">Rencontre Melanie / Mitch. Lovebirds en cadeau. Tonalité mondaine, jeu de séduction urbain.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Route et baie de Bodega</div>
+        <div class="card-body" style="font-size: 0.875rem;">Trajet en voiture puis bateau. Première attaque : mouette qui frappe Melanie au front. Quasi-invisible, dans le silence.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Maison Brenner</div>
+        <div class="card-body" style="font-size: 0.875rem;">Lieu central du dernier tiers. Attaque par la cheminée (essaim qui descend). Climax : grenier, Melanie catatonique.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Cottage d'Annie Hayworth</div>
+        <div class="card-body" style="font-size: 0.875rem;">Refuge intermédiaire. Melanie y dort. Plus tard : lieu de la mort d'Annie (hors-champ).</div>
+      </div>
+      <div class="card">
+        <div class="card-title">École de Bodega Bay</div>
+        <div class="card-body" style="font-size: 0.875rem;">Corbeaux qui s'accumulent sur le portique pendant que les enfants chantent. Travelling iconique en descente pendant l'attaque.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">The Tides Restaurant</div>
+        <div class="card-body" style="font-size: 0.875rem;">Confrontation communautaire. Ornithologue expose scepticisme. Ivrogne cite Bible. Mère hystérique accuse Melanie.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Station-service</div>
+        <div class="card-body" style="font-size: 0.875rem;">Explosion provoquée par mouette. Plan plongeant iconique : baie en feu (point de vue implicite du ciel).</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Grenier de Brenner</div>
+        <div class="card-body" style="font-size: 0.875rem;">Dernier lieu intérieur. Attaque finale sur Melanie isolée. Oiseaux statiques sur toit défoncé, puis soudain attaque.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">La route au matin (sortie)</div>
+        <div class="card-body" style="font-size: 0.875rem;">Plan final : famille traverse cour couverte d'oiseaux silencieux. Pas de musique, pas de "The End" — sortie ouverte.</div>
+      </div>
+    </div>
+
+    <p style="margin-top: var(--space-6); font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-muted);">
+      → <a class="src-link" href="locations.md">locations.md</a>
+    </p>
+  </section>
+
+  <!-- ───────────── POOL TEASER ───────────── -->
+  <section class="section" id="teaser">
+    <p class="section-label">Banque d'images</p>
+    <h2 style="margin-bottom: var(--space-2);">Pool teaser — 9 blocs</h2>
+    <p style="font-size: 0.875rem; color: var(--color-text-muted); margin-bottom: var(--space-6);">Images iconiques du film. → <a class="src-link" href="teaser_pool.md">teaser_pool.md</a></p>
+
+    <details style="margin-bottom: var(--space-3);">
+      <summary><span class="pool-bloc">A</span> &nbsp; Pet shop — l'ouverture mondaine <span class="summary-arrow">▾</span></summary>
+      <div class="details-body">
+        <ul style="display: flex; flex-direction: column; gap: var(--space-2); font-size: 0.875rem; color: var(--color-text-secondary);">
+          <li>Vitrine d'oiseaux en cage à San Francisco</li>
+          <li>Cage de lovebirds (inséparables) — fil rouge symbolique</li>
+          <li>Échange Melanie / Mitch sous prétexte de blague</li>
+          <li>Sourires, jeux de regard, ironie urbaine</li>
+          <li>Tonalité : screwball comedy</li>
+        </ul>
+      </div>
+    </details>
+
+    <details style="margin-bottom: var(--space-3);">
+      <summary><span class="pool-bloc">B</span> &nbsp; La traversée de la baie <span class="summary-arrow">▾</span></summary>
+      <div class="details-body">
+        <ul style="display: flex; flex-direction: column; gap: var(--space-2); font-size: 0.875rem; color: var(--color-text-secondary);">
+          <li>Petit bateau à moteur, Melanie au volant</li>
+          <li>Plan large sur la baie, ciel pâle</li>
+          <li>Approche de la maison Brenner depuis l'eau</li>
+          <li>Première mouette qui frappe Melanie au front</li>
+          <li>Surprise, pas encore peur</li>
+        </ul>
+      </div>
+    </details>
+
+    <details style="margin-bottom: var(--space-3);">
+      <summary><span class="pool-bloc">C</span> &nbsp; L'école — corbeaux sur le portique <span class="summary-arrow">▾</span></summary>
+      <div class="details-body">
+        <ul style="display: flex; flex-direction: column; gap: var(--space-2); font-size: 0.875rem; color: var(--color-text-secondary);">
+          <li>Travelling sur les corbeaux qui s'accumulent un par un</li>
+          <li>Enfants qui chantent en classe, ne voient pas</li>
+          <li>Melanie sur un banc, fume, ne voit pas</li>
+          <li>Plan d'apothéose : portique noir de corbeaux</li>
+          <li>Enfants qui courent, travelling latéral en descente</li>
+        </ul>
+      </div>
+    </details>
+
+    <details style="margin-bottom: var(--space-3);">
+      <summary><span class="pool-bloc">D</span> &nbsp; Station-service / explosion <span class="summary-arrow">▾</span></summary>
+      <div class="details-body">
+        <ul style="display: flex; flex-direction: column; gap: var(--space-2); font-size: 0.875rem; color: var(--color-text-secondary);">
+          <li>Mouette percute automobiliste à la pompe</li>
+          <li>Essence qui se répand, allumette qui craque</li>
+          <li>Vue plongeante sur la baie en feu</li>
+          <li>Iconique cinéma : plan d'oiseau implicite</li>
+        </ul>
+      </div>
+    </details>
+
+    <details style="margin-bottom: var(--space-3);">
+      <summary><span class="pool-bloc">E</span> &nbsp; The Tides Restaurant <span class="summary-arrow">▾</span></summary>
+      <div class="details-body">
+        <ul style="display: flex; flex-direction: column; gap: var(--space-2); font-size: 0.875rem; color: var(--color-text-secondary);">
+          <li>Confrontation communautaire</li>
+          <li>Ornithologue en chapeau qui argumente posément</li>
+          <li>Ivrogne qui cite la Bible : "It's the end of the world"</li>
+          <li>Mère hystérique : "You're the cause of all this!"</li>
+          <li>Vue par la fenêtre sur l'explosion à la station</li>
+        </ul>
+      </div>
+    </details>
+
+    <details style="margin-bottom: var(--space-3);">
+      <summary><span class="pool-bloc">F</span> &nbsp; Maison Brenner barricadée <span class="summary-arrow">▾</span></summary>
+      <div class="details-body">
+        <ul style="display: flex; flex-direction: column; gap: var(--space-2); font-size: 0.875rem; color: var(--color-text-secondary);">
+          <li>Mitch barricade portes et fenêtres avec planches</li>
+          <li>Lydia, Cathy, Melanie attendent dans salon</li>
+          <li>Bruit d'oiseaux qui monte, puis silence, puis explosion</li>
+          <li>Attaque par la cheminée — essaim qui descend</li>
+          <li>Chaos domestique, Mitch combat à mains nues</li>
+        </ul>
+      </div>
+    </details>
+
+    <details style="margin-bottom: var(--space-3);">
+      <summary><span class="pool-bloc">G</span> &nbsp; Le grenier <span class="summary-arrow">▾</span></summary>
+      <div class="details-body">
+        <ul style="display: flex; flex-direction: column; gap: var(--space-2); font-size: 0.875rem; color: var(--color-text-secondary);">
+          <li>Melanie monte seule, croit entendre un bruit</li>
+          <li>Ouvre la porte : oiseaux statiques sur toit défoncé</li>
+          <li>Soudain attaque — Melanie couverte</li>
+          <li>Mains levées, miche arrive, la sort</li>
+          <li>État catatonique final</li>
+        </ul>
+      </div>
+    </details>
+
+    <details style="margin-bottom: var(--space-3);">
+      <summary><span class="pool-bloc">H</span> &nbsp; La sortie au matin <span class="summary-arrow">▾</span></summary>
+      <div class="details-body">
+        <ul style="display: flex; flex-direction: column; gap: var(--space-2); font-size: 0.875rem; color: var(--color-text-secondary);">
+          <li>Cour couverte d'oiseaux silencieux</li>
+          <li>Oiseaux ne bougent pas, observent</li>
+          <li>Famille descend dans voiture, Melanie portée</li>
+          <li>Voiture démarre lentement</li>
+          <li>Plan d'ensemble : route, oiseaux à perte de vue, ciel pâle</li>
+          <li>Pas de "The End" — coupe sec</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary><span class="pool-bloc">I</span> &nbsp; Plans iconiques <span class="summary-arrow">▾</span></summary>
+      <div class="details-body">
+        <ul style="display: flex; flex-direction: column; gap: var(--space-2); font-size: 0.875rem; color: var(--color-text-secondary);">
+          <li>Cage de lovebirds qui se balance dans voiture</li>
+          <li>Cigarette de Melanie sur le banc devant école</li>
+          <li>Yeux arrachés de Dan Fawcett (champ-contre-champ avec Lydia)</li>
+          <li>Visage catatonique de Melanie</li>
+          <li>Regard final ambigu de Lydia vers Melanie</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ───────────── FRAGMENTS ───────────── -->
+  <section class="section" id="fragments">
+    <p class="section-label">Citations notables</p>
+    <h2 style="margin-bottom: var(--space-5);">Fragments littéraires</h2>
+
+    <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+      <div class="fragment">
+        It's the end of the world.
+        <cite><a class="src-link" href="fragments.md">L'ivrogne au Tides</a></cite>
+      </div>
+
+      <div class="fragment">
+        You're the cause of all this!
+        <cite><a class="src-link" href="fragments.md">Mère hystérique au Tides</a></cite>
+      </div>
+
+      <div class="fragment">
+        I think you came up to see me.
+        <cite><a class="src-link" href="fragments.md">Mitch à Melanie — retournement du jeu</a></cite>
+      </div>
+    </div>
+
+    <p style="margin-top: var(--space-6); color: var(--color-text-muted); font-size: 0.875rem;">
+      Dialogue concis à l'oral. Phrases courtes dans les moments de crise. Silences plutôt que paroles à mesure que le film avance. Aucun monologue explicatif sur la cause — Hitchcock refuse l'exposition.
+    </p>
+
+    <p style="margin-top: var(--space-3); font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-muted);">
+      → <a class="src-link" href="fragments.md">fragments.md</a>
+    </p>
+  </section>
+
+  <!-- ───────────── RÉFÉRENCES ───────────── -->
+  <section class="section" id="refs">
+    <p class="section-label">Références</p>
+    <h2 style="margin-bottom: var(--space-6);">Sources et influences</h2>
+
+    <div style="display: flex; flex-direction: column; gap: 0;">
+      <div class="ref-entry">
+        <div class="ref-type">Littérature</div>
+        <div class="ref-body">
+          <div class="ref-title">Daphne du Maurier — The Birds (1952)</div>
+          <div class="ref-note">Nouvelle d'origine, courte, située en Cornouailles. Hitchcock conserve l'idée centrale (attaques inexpliquées) mais déplace l'action en Californie et invente la romance / famille.</div>
+        </div>
+      </div>
+
+      <div class="ref-entry">
+        <div class="ref-type">Scénario</div>
+        <div class="ref-body">
+          <div class="ref-title">Evan Hunter (1926-2005)</div>
+          <div class="ref-note">Scénariste principal. Pseudonyme Ed McBain (série 87th Precinct). C'est lui qui invente le triangle Mitch / Melanie / Lydia et la dimension psychologique mère possessive.</div>
+        </div>
+      </div>
+
+      <div class="ref-entry">
+        <div class="ref-type">Cinéma</div>
+        <div class="ref-body">
+          <div class="ref-title">Hitchcock — école maître</div>
+          <div class="ref-note">Psycho (1960), équipe technique son identique. Vertigo (1958), dimension obsessionnelle. North by Northwest (1959), MacGuffin porté à l'extrême. Rear Window (1954), observation passive.</div>
+        </div>
+      </div>
+
+      <div class="ref-entry">
+        <div class="ref-type">Héritage</div>
+        <div class="ref-body">
+          <div class="ref-title">Eco-horror moderne</div>
+          <div class="ref-note">Day of the Animals (1977), Jaws (1975), M. Night Shyamalan — The Happening (2008), Annihilation (Garland, 2018).</div>
+        </div>
+      </div>
+
+      <div class="ref-entry">
+        <div class="ref-type">Son</div>
+        <div class="ref-body">
+          <div class="ref-title">Oskar Sala — Trautonium</div>
+          <div class="ref-note">Instrument électronique allemand. Pas de musique mélodique, uniquement textures sonores simulant cris d'oiseaux. Précurseur du sound design moderne.</div>
+        </div>
+      </div>
+
+      <div class="ref-entry">
+        <div class="ref-type">Son</div>
+        <div class="ref-body">
+          <div class="ref-title">Bernard Herrmann — conseiller sonore</div>
+          <div class="ref-note">Crédité comme conseiller. Ne compose pas de score (rare pour lui chez Hitchcock).</div>
+        </div>
+      </div>
+
+      <div class="ref-entry">
+        <div class="ref-type">Direction</div>
+        <div class="ref-body">
+          <div class="ref-title">Robert Boyle — décoration</div>
+          <div class="ref-note">Chef décorateur, collaborations multiples avec Hitchcock.</div>
+        </div>
+      </div>
+
+      <div class="ref-entry">
+        <div class="ref-type">Costumes</div>
+        <div class="ref-body">
+          <div class="ref-title">Edith Head</div>
+          <div class="ref-note">La jupe verte de Melanie est devenue iconique — étude de couleur sur la durée du film.</div>
+        </div>
+      </div>
+
+      <div class="ref-entry">
+        <div class="ref-type">Effets</div>
+        <div class="ref-body">
+          <div class="ref-title">Albert Whitlock, Ub Iwerks</div>
+          <div class="ref-note">Matte paintings, compositions oiseaux. Ub Iwerks (ex-Disney) prêté pour les oiseaux. Mix d'oiseaux dressés, mécaniques, animations et superpositions optiques.</div>
+        </div>
+      </div>
+
+      <div class="ref-entry">
+        <div class="ref-type">Casting</div>
+        <div class="ref-body">
+          <div class="ref-title">Tippi Hedren — Melanie</div>
+          <div class="ref-note">Découverte par Hitchcock dans pub Sego. Premier rôle. Tournage célèbre pour oiseaux vivants jetés sur elle.</div>
+        </div>
+      </div>
+
+      <div class="ref-entry">
+        <div class="ref-type">Casting</div>
+        <div class="ref-body">
+          <div class="ref-title">Rod Taylor, Jessica Tandy, Suzanne Pleshette, Veronica Cartwright</div>
+          <div class="ref-note">Mitch, Lydia, Annie, Cathy.</div>
+        </div>
+      </div>
+
+      <div class="ref-entry">
+        <div class="ref-type">Critique</div>
+        <div class="ref-body">
+          <div class="ref-title">Lectures multiples</div>
+          <div class="ref-note">Freudienne (mère possessive projette sur étrangère). Écologique (prémonition dérèglement). Du Maurier (nature reprend droits). Formelle (exercice suspense pur sans résolution).</div>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top: var(--space-6); font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-muted);">
+      → <a class="src-link" href="refs.md">refs.md</a>
+    </p>
+  </section>
+
+  <!-- ───────────── STATS PROJET ───────────── -->
+  <section class="section" id="stats">
+    <p class="section-label">Métriques</p>
+    <h2 style="margin-bottom: var(--space-5);">Stats projet</h2>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-value">8</div>
+        <div class="stat-label">Sections monde</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">9</div>
+        <div class="stat-label">Personnages</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">10</div>
+        <div class="stat-label">Lieux</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">9</div>
+        <div class="stat-label">Blocs teaser</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Fragments cités</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">119</div>
+        <div class="stat-label">Min (runtime)</div>
+      </div>
+    </div>
+
+    <p style="margin-top: var(--space-6); color: var(--color-text-secondary); font-size: 0.875rem;">
+      Dossier de développement pour <strong>The Birds</strong> (Hitchcock, 1963). Screenwriter : Evan Hunter. Sources : Daphne du Maurier (1952).
+    </p>
+  </section>
+
+</main>
+
+</div>
+
+<script>
+// IntersectionObserver pour mettre à jour la nav active
+const navLinks = document.querySelectorAll('.nav-links a');
+const sections = document.querySelectorAll('.section');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      const id = entry.target.getAttribute('id');
+      navLinks.forEach((link) => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${id}`) {
+          link.classList.add('active');
+        }
+      });
+    }
+  });
+}, { threshold: 0.3 });
+
+sections.forEach((section) => {
+  observer.observe(section);
+});
+
+// Respecter prefers-reduced-motion
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.querySelectorAll('.float-element, .leaf-hover-wrap').forEach((el) => {
+    el.style.animation = 'none';
+  });
+}
+</script>
+
+</body>
+</html>

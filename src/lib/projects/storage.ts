@@ -12,6 +12,20 @@ const PROJECTS_DIR_VOLUME = path.join(DATA_ROOT, "projects");
 // They're read in addition to the volume.
 const PROJECTS_DIR_REPO = path.join(process.cwd(), "projects");
 
+// Returns the rich dashboard.html for a project if one exists (volume first,
+// then repo). The app serves this verbatim — same identity as the NBS dashboard.
+export async function hasRichDashboard(projectId: string): Promise<boolean> {
+  for (const base of [PROJECTS_DIR_VOLUME, PROJECTS_DIR_REPO]) {
+    try {
+      await fs.access(path.join(base, projectId, "dashboard.html"));
+      return true;
+    } catch {
+      // try next
+    }
+  }
+  return false;
+}
+
 async function readMdFiles(dir: string): Promise<Map<string, string>> {
   const result = new Map<string, string>();
   try {
