@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getProjectResults, listProjects, hasRichDashboard } from "@/lib/projects/storage";
 import MdContent from "./md-content";
+import SubmitOverlay from "./submit-overlay";
 import "./dashboard.css";
 
 export const dynamic = "force-dynamic";
@@ -51,17 +52,20 @@ export default async function ProjectPage({
   // serve it full-screen in an iframe — same identity as the NBS dashboard.
   if (await hasRichDashboard(slug)) {
     return (
-      <iframe
-        src={`/api/dashboard/${slug}`}
-        title={String(project.meta?.originalFilename ?? slug)}
-        style={{
-          position: "fixed",
-          inset: 0,
-          width: "100%",
-          height: "100dvh",
-          border: "none",
-        }}
-      />
+      <>
+        <iframe
+          src={`/api/dashboard/${slug}`}
+          title={String(project.meta?.originalFilename ?? slug)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            width: "100%",
+            height: "100dvh",
+            border: "none",
+          }}
+        />
+        <SubmitOverlay />
+      </>
     );
   }
 
@@ -138,6 +142,7 @@ export default async function ProjectPage({
           )}
         </main>
       </div>
+      <SubmitOverlay />
     </div>
   );
 }
