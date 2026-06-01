@@ -3,7 +3,7 @@ import { Cormorant_Garamond, DM_Mono } from "next/font/google";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
-  variable: "--font-serif",
+  variable: "--font-cormorant",
   subsets: ["latin"],
   weight: ["300", "400", "600"],
   style: ["normal", "italic"],
@@ -11,7 +11,7 @@ const cormorant = Cormorant_Garamond({
 });
 
 const dmMono = DM_Mono({
-  variable: "--font-mono",
+  variable: "--font-dm-mono",
   subsets: ["latin"],
   weight: ["300", "400"],
   display: "swap",
@@ -31,17 +31,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${dmMono.variable} h-full antialiased`}
+      className={`${cormorant.variable} ${dmMono.variable} h-full`}
     >
-      <body
-        className="min-h-full flex flex-col"
-        style={{
-          fontFamily:
-            "'Cormorant Garamond', var(--font-serif), Georgia, serif",
-        }}
-      >
-        {children}
-      </body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }
