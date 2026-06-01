@@ -6,29 +6,28 @@
 <title>Thérémine — Document de développement</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:    oklch(8%  0.010 50);
-  --bg-2:  oklch(12% 0.012 52);
-  --bg-3:  oklch(16% 0.012 54);
-  --bd:    oklch(22% 0.010 52);
-  --bd-l:  oklch(17% 0.010 52);
-  --t1:    oklch(88% 0.008 72);
-  --t2:    oklch(62% 0.008 68);
-  --t3:    oklch(40% 0.007 65);
-  --teal:  oklch(64% 0.072 188);
-  --gold:  oklch(68% 0.110 80);
-  --serif: 'Cormorant Garamond', Georgia, serif;
+  --paper:   oklch(98%  0.002 250);
+  --surface: oklch(95%  0.004 65);
+  --rule:    oklch(86%  0.005 65);
+  --ink:     oklch(12%  0.008 60);
+  --ink-2:   oklch(36%  0.008 65);
+  --ink-3:   oklch(58%  0.006 65);
+  --red:     oklch(52%  0.18  28);
+  --red-bg:  oklch(52%  0.18  28 / 0.08);
+  --amber:   oklch(62%  0.12  78);
+  --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
   --mono:  'DM Mono', 'Courier New', monospace;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; font-size: 16px; }
 body {
-  background: var(--bg);
-  color: var(--t1);
-  font-family: var(--mono);
-  font-size: 13px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.0625rem;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -39,8 +38,8 @@ nav {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--bg);
-  border-bottom: 1px solid var(--bd);
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
   height: 40px;
   display: flex;
   align-items: center;
@@ -52,9 +51,9 @@ nav::-webkit-scrollbar { display: none; }
 .nav-brand {
   font-family: var(--mono);
   font-size: 9px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--t3);
+  color: var(--ink-3);
   white-space: nowrap;
   margin-right: 20px;
   flex-shrink: 0;
@@ -62,7 +61,7 @@ nav::-webkit-scrollbar { display: none; }
 nav a {
   font-family: var(--mono);
   font-size: 9px;
-  color: var(--t3);
+  color: var(--ink-3);
   text-decoration: none;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -75,134 +74,139 @@ nav a {
   transition: color 0.12s;
   flex-shrink: 0;
 }
-nav a:hover { color: var(--teal); }
-nav a .n { color: var(--teal); }
+nav a:hover { color: var(--red); }
+nav a .n { color: var(--red); }
 
 /* MAIN */
-main { max-width: 740px; margin: 0 auto; padding: 0 24px 80px; }
+main { max-width: 700px; margin: 0 auto; padding: 0 28px 100px; }
 
 /* HERO */
-.hero { padding: 72px 0 56px; border-bottom: 1px solid var(--bd); }
+.hero { padding: 72px 0 64px; border-bottom: 1px solid var(--rule); }
 .hero-label {
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--teal);
-  margin-bottom: 28px;
+  color: var(--red);
+  margin-bottom: 20px;
 }
 .hero-title {
-  font-family: var(--serif);
   font-weight: 300;
-  font-size: clamp(4.5rem, 13vw, 9rem);
+  font-size: clamp(4.5rem, 15vw, 10.5rem);
   line-height: 0.88;
-  letter-spacing: -0.025em;
-  color: var(--t1);
-  margin-bottom: 20px;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin-bottom: 28px;
 }
 .hero-meta {
   font-family: var(--mono);
   font-size: 10px;
-  color: var(--t2);
+  color: var(--ink-2);
   letter-spacing: 0.08em;
-  margin-bottom: 36px;
+  margin-bottom: 32px;
 }
 .hero-rule {
-  border: none;
-  height: 1px;
-  background: repeating-linear-gradient(90deg, var(--bd) 0, var(--bd) 4px, transparent 4px, transparent 8px);
-  margin-bottom: 36px;
+  width: 48px;
+  height: 2px;
+  background: var(--red);
+  margin-bottom: 32px;
 }
 .hero-logline {
-  font-family: var(--serif);
   font-style: italic;
   font-weight: 300;
-  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  font-size: clamp(1.2rem, 2.5vw, 1.4rem);
   line-height: 1.75;
-  color: var(--t2);
-  max-width: 580px;
+  color: var(--ink-2);
+  max-width: 560px;
 }
 
 /* CHAPTER */
-.chapter { padding: 52px 0; border-bottom: 1px solid var(--bd-l); }
+.chapter { padding: 60px 0; border-bottom: 1px solid var(--rule); }
 .chapter:last-child { border-bottom: none; }
-.ch-header { display: flex; align-items: center; gap: 14px; margin-bottom: 36px; }
-.ch-num { font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; color: var(--teal); flex-shrink: 0; }
-.ch-rule { flex: 1; height: 1px; background: var(--bd); }
-.ch-name { font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--t3); flex-shrink: 0; }
+.ch-header { display: flex; align-items: center; gap: 14px; margin-bottom: 44px; }
+.ch-num { font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; color: var(--red); flex-shrink: 0; }
+.ch-rule { flex: 1; height: 1px; background: var(--rule); }
+.ch-name { font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3); flex-shrink: 0; }
 
-/* HEADINGS */
-h2 { font-family: var(--serif); font-weight: 300; font-size: clamp(1.9rem, 5vw, 2.8rem); line-height: 1.1; letter-spacing: -0.015em; color: var(--t1); margin-bottom: 28px; }
-h3 { font-family: var(--serif); font-weight: 400; font-size: 1.45rem; line-height: 1.2; color: var(--t1); margin-top: 40px; margin-bottom: 14px; }
-h4 { font-family: var(--mono); font-size: 9px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.22em; color: var(--teal); margin-top: 28px; margin-bottom: 10px; }
+/* HEADINGS — 5-level scale, no ambiguity */
+h2 { font-weight: 300; font-size: clamp(2.25rem, 6vw, 3.5rem); line-height: 1.05; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 36px; }
+h3 { font-weight: 400; font-size: 1.75rem; line-height: 1.15; color: var(--ink); margin-top: 48px; margin-bottom: 14px; }
+h4 { font-family: var(--mono); font-size: 9px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.22em; color: var(--red); margin-top: 32px; margin-bottom: 12px; }
+h3:first-child, h4:first-child { margin-top: 0; }
 
 /* BODY */
-p { font-size: 13px; line-height: 1.75; color: var(--t2); margin-bottom: 12px; }
-ul, ol { padding-left: 18px; margin-bottom: 12px; }
-li { font-size: 13px; line-height: 1.7; color: var(--t2); margin-bottom: 4px; }
+p { font-size: 1rem; line-height: 1.75; color: var(--ink-2); margin-bottom: 14px; }
+ul, ol { padding-left: 20px; margin-bottom: 14px; }
+li { font-size: 1rem; line-height: 1.75; color: var(--ink-2); margin-bottom: 5px; }
 ul li { list-style: none; position: relative; }
-ul li::before { content: '·'; position: absolute; left: -14px; color: var(--t3); }
+ul li::before { content: '—'; position: absolute; left: -18px; color: var(--ink-3); }
 ol li { list-style: decimal; }
-strong { color: var(--t1); font-weight: 600; }
+strong { color: var(--ink); font-weight: 600; }
 
 /* TABLES */
-table { width: 100%; border-collapse: collapse; margin: 4px 0 20px; }
-th { font-family: var(--mono); font-size: 9px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.18em; color: var(--teal); padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--bd); background: var(--bg-2); }
-td { font-size: 12px; color: var(--t2); padding: 8px 12px; border-bottom: 1px solid var(--bd-l); vertical-align: top; }
-tr:hover td { background: color-mix(in oklch, var(--teal) 4%, transparent); }
+table { width: 100%; border-collapse: collapse; margin: 4px 0 24px; }
+th { font-family: var(--mono); font-size: 9px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.18em; color: var(--red); padding: 8px 14px; text-align: left; border-bottom: 1px solid var(--rule); background: var(--surface); }
+td { font-family: var(--serif); font-size: 0.9375rem; color: var(--ink-2); padding: 10px 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+tr:hover td { background: var(--surface); }
 
 /* BLOCKQUOTE */
-blockquote { border-left: 1.5px solid var(--gold); padding: 14px 18px; margin: 16px 0; background: color-mix(in oklch, var(--gold) 4%, transparent); }
-blockquote p { font-family: var(--serif); font-style: italic; font-size: 1.15rem; line-height: 1.7; color: var(--t1); margin: 0; }
-.q-attr { font-size: 10px; color: var(--t3); margin-top: 8px; }
+blockquote { border-left: 2px solid var(--red); padding: 16px 20px; margin: 20px 0; background: var(--red-bg); }
+blockquote p { font-style: italic; font-size: 1.25rem; line-height: 1.7; color: var(--ink); margin: 0; }
+.q-attr { font-family: var(--mono); font-size: 10px; color: var(--ink-3); margin-top: 10px; }
 
-/* IMAGE BLOCKS */
-.image-block { padding: 32px 0; border-bottom: 1px solid var(--bd-l); }
+/* IMAGES (teaser pool) */
+.image-block { padding: 40px 0; border-bottom: 1px solid var(--rule); }
 .image-block:last-child { border-bottom: none; }
-.img-n { font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; color: var(--teal); margin-bottom: 8px; }
-.img-title { font-family: var(--serif); font-weight: 400; font-size: 1rem; color: var(--t3); letter-spacing: 0.04em; margin-bottom: 14px; }
-.img-desc { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: clamp(1.1rem, 2.5vw, 1.25rem); line-height: 1.8; color: var(--t1); margin-bottom: 14px; }
-.img-caption { font-family: var(--mono); font-size: 11px; color: var(--t3); letter-spacing: 0.04em; }
+.img-n { font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; color: var(--red); margin-bottom: 10px; }
+.img-title { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-3); margin-bottom: 20px; }
+.img-desc { font-style: italic; font-weight: 300; font-size: clamp(1.3rem, 2.8vw, 1.6rem); line-height: 1.75; color: var(--ink); margin-bottom: 16px; }
+.img-caption { font-family: var(--mono); font-size: 10px; color: var(--ink-3); letter-spacing: 0.06em; }
 
-/* FRAGMENTS */
-.fragments-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--bd-l); margin-top: 4px; }
-.frag-cell { background: var(--bg); padding: 24px 20px; }
-.frag-n { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; color: var(--teal); margin-bottom: 10px; }
-.frag-quote { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: 1.1rem; line-height: 1.65; color: var(--t1); margin-bottom: 10px; }
-.frag-attr { font-family: var(--mono); font-size: 10px; color: var(--t3); letter-spacing: 0.04em; }
+/* FRAGMENTS GRID */
+.fragments-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); }
+.frag-cell { background: var(--paper); padding: 28px 22px; }
+.frag-n { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; color: var(--red); margin-bottom: 12px; }
+.frag-quote { font-style: italic; font-weight: 300; font-size: 1.2rem; line-height: 1.65; color: var(--ink); margin-bottom: 12px; }
+.frag-attr { font-family: var(--mono); font-size: 10px; color: var(--ink-3); }
 
 /* CHAR CARDS */
-.char-card { padding: 24px 0; border-bottom: 1px solid var(--bd-l); }
+.char-card { padding: 32px 0; border-bottom: 1px solid var(--rule); }
 .char-card:last-child { border-bottom: none; }
-.char-name { font-family: var(--serif); font-weight: 600; font-size: 1.5rem; color: var(--t1); margin-bottom: 4px; }
-.char-role { font-family: var(--mono); font-size: 9px; color: var(--teal); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 14px; }
-.char-body p { font-size: 12px; line-height: 1.75; }
-.char-body h4 { margin-top: 14px; }
+.char-name { font-weight: 600; font-size: 1.875rem; color: var(--ink); margin-bottom: 4px; letter-spacing: -0.01em; }
+.char-role { font-family: var(--mono); font-size: 9px; color: var(--red); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 18px; }
+.char-body p { font-size: 0.9375rem; }
+.char-body h4 { margin-top: 18px; }
 
 /* ENDINGS */
-.ending { border-left: 2px solid var(--gold); padding: 20px; margin-bottom: 24px; background: color-mix(in oklch, var(--gold) 3%, var(--bg-2)); }
-.ending-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
-.ending h3 { font-size: 1.3rem; margin-top: 0; margin-bottom: 12px; }
+.ending { border-left: 2px solid var(--amber); padding: 22px; margin-bottom: 24px; background: oklch(62% 0.12 78 / 0.06); }
+.ending-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: oklch(50% 0.10 78); margin-bottom: 10px; }
+.ending h3 { font-size: 1.5rem; margin-top: 0; margin-bottom: 14px; }
 
 /* PRE */
-pre { background: var(--bg-2); border: 1px solid var(--bd); padding: 14px 16px; overflow-x: auto; font-family: var(--mono); font-size: 11px; line-height: 1.6; color: var(--t2); margin: 16px 0; }
-
-/* INFO BOX */
-.info-box { background: var(--bg-2); border: 1px solid var(--bd); padding: 20px; margin: 20px 0; }
+pre { background: var(--surface); border: 1px solid var(--rule); padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 11px; line-height: 1.6; color: var(--ink-2); margin: 16px 0; }
 
 /* META TABLE */
-.meta-table { width: 100%; margin-bottom: 8px; border-collapse: collapse; }
-.meta-table td:first-child { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--t3); width: 120px; padding: 9px 16px 9px 0; vertical-align: top; border-bottom: 1px solid var(--bd-l); }
-.meta-table td:last-child { color: var(--t1); font-family: var(--mono); font-size: 13px; padding: 9px 0; border-bottom: 1px solid var(--bd-l); }
+.meta-table { width: 100%; border-collapse: collapse; }
+.meta-table td:first-child { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--ink-3); width: 110px; padding: 10px 16px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.meta-table td:last-child { font-family: var(--serif); font-size: 1rem; color: var(--ink); padding: 10px 0; border-bottom: 1px solid var(--rule); }
+
+/* INFO BOX */
+.info-box { background: var(--surface); border-left: 2px solid var(--rule); padding: 22px 24px; margin: 24px 0; }
+.info-box h4 { margin-top: 0; }
+.info-box p { font-size: 0.9375rem; }
+
+/* HR */
+hr.rule { border: none; border-top: 1px solid var(--rule); margin: 32px 0; }
 
 /* FOOTER */
-.footer { border-top: 1px solid var(--bd); padding: 24px 0; font-family: var(--mono); font-size: 10px; color: var(--t3); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; letter-spacing: 0.08em; }
+.footer { border-top: 1px solid var(--rule); padding: 24px 0; font-family: var(--mono); font-size: 10px; color: var(--ink-3); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; letter-spacing: 0.06em; }
 
-@media (max-width: 580px) {
-  main { padding: 0 16px 60px; }
-  .hero { padding: 48px 0 36px; }
+@media (max-width: 560px) {
+  main { padding: 0 18px 80px; }
+  .hero { padding: 48px 0 44px; }
   .fragments-grid { grid-template-columns: 1fr; }
   nav { padding: 0 16px; }
+  h3 { font-size: 1.5rem; }
 }
 </style>
 </head>
@@ -222,19 +226,19 @@ pre { background: var(--bg-2); border: 1px solid var(--bd); padding: 14px 16px; 
 
 <main>
 
+<!-- HERO -->
 <section class="hero">
   <div class="hero-label">Document de développement &nbsp;&middot;&nbsp; The soft War &nbsp;&middot;&nbsp; 2026</div>
   <h1 class="hero-title">Thérémine</h1>
   <div class="hero-meta">Rami Jarboui &nbsp;&middot;&nbsp; Tunisie &nbsp;&middot;&nbsp; Drame psychologique / Réalisme magique</div>
   <div class="hero-rule"></div>
-  <p class="hero-logline">Dans la banlieue de Tunis, Hend&nbsp;&mdash; jeune femme au crâne rasé hypersensible aux sons&nbsp;&mdash; est exploitée par son père comme médium truqué. Lorsqu'elle brise le script d'une séance pour révéler un abus, tout s'effondre&nbsp;: enfermement psychiatrique, fuite, apprentissage du theremin. La musique sans contact lui rend ce que le silence lui avait volé.</p>
+  <p class="hero-logline">Dans la banlieue de Tunis, Hend &mdash; jeune femme au crâne rasé hypersensible aux sons &mdash; est exploitée par son père comme médium truqué. Lorsqu'elle brise le script d'une séance pour révéler un abus, tout s'effondre&nbsp;: enfermement psychiatrique, fuite, apprentissage du theremin. La musique sans contact lui rend ce que le silence lui avait volé.</p>
 </section>
 
+<!-- 01 PITCH -->
 <section class="chapter" id="pitch">
   <div class="ch-header">
-    <span class="ch-num">01</span>
-    <div class="ch-rule"></div>
-    <span class="ch-name">Pitch</span>
+    <span class="ch-num">01</span><div class="ch-rule"></div><span class="ch-name">Pitch</span>
   </div>
   <table class="meta-table">
     <tbody>
@@ -243,56 +247,49 @@ pre { background: var(--bg-2); border: 1px solid var(--bd); padding: 14px 16px; 
       <tr><td>Genre</td><td>Drame psychologique / Réalisme magique</td></tr>
       <tr><td>Pays</td><td>Tunisie</td></tr>
       <tr><td>Cadre</td><td>Hammam Lif, Tunis &mdash; Tunisie contemporaine (post-2011)</td></tr>
-      <tr><td>Format source</td><td>Scénario .docx (581&nbsp;KB)</td></tr>
-      <tr><td>Analysé le</td><td>2026-06-01</td></tr>
+      <tr><td>Format</td><td>Scénario .docx (581&nbsp;KB)</td></tr>
+      <tr><td>Analysé le</td><td>2026-06-01 &nbsp;&middot;&nbsp; The soft War</td></tr>
     </tbody>
   </table>
-  <div class="info-box" style="margin-top:28px;">
-    <h4 style="margin-top:0;">L'instrument</h4>
-    <p>Le theremin est le seul instrument joué sans contact physique. Deux antennes&nbsp;: verticale pour la hauteur, horizontale pour le volume. Le musicien déplace ses mains dans le champ électromagnétique. <strong>On ne joue pas du theremin. On mesure la distance.</strong></p>
-    <p style="margin-top:6px;font-size:11px;color:var(--t3);">Inventé en 1920 par Léon Theremin (Lev Sergeïevitch Termen, URSS). Sonorité proche de la voix humaine &mdash; soprano éthéré, glissandi, vibrato naturel.</p>
+  <div class="info-box" style="margin-top:36px;">
+    <h4>L'instrument</h4>
+    <p>Le theremin est le seul instrument joué sans contact physique. Deux antennes gouvernent la hauteur et le volume &mdash; le musicien déplace ses mains dans le champ électromagnétique. <strong>On ne joue pas du theremin. On apprend à mesurer la distance.</strong></p>
+    <p style="font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-top:6px;">Inventé en 1920 par Léon Theremin (Lev Sergeïevitch Termen, URSS). Sonorité proche de la voix humaine.</p>
   </div>
 </section>
 
+<!-- 02 MONDE -->
 <section class="chapter" id="monde">
   <div class="ch-header">
-    <span class="ch-num">02</span>
-    <div class="ch-rule"></div>
-    <span class="ch-name">Monde</span>
+    <span class="ch-num">02</span><div class="ch-rule"></div><span class="ch-name">Monde</span>
   </div>
   <h2>Worldbuilding</h2>
 
-  <h4>01 &middot; Loi physique fondatrice</h4>
-  <p>Le monde du film est le nôtre, sauf que certains êtres humains perçoivent des sons inaccessibles aux autres. Pas de magie nommée, pas d'origine surnaturelle expliquée. Le dérèglement d'Hend est à la fois un don, une malédiction et un diagnostic&nbsp;: le film refuse de trancher.</p>
+  <h4>Loi physique fondatrice</h4>
+  <p>Le monde du film est le nôtre, sauf que certains êtres humains perçoivent des sons inaccessibles aux autres. Pas de magie nommée, pas d'origine surnaturelle expliquée. Le dérèglement d'Hend est à la fois un don, une malédiction et un diagnostic &mdash; le film refuse de trancher.</p>
   <ul>
     <li>La frontière entre hypersensibilité sensorielle et voyance est délibérément poreuse</li>
     <li>Le theremin physicalise cette loi&nbsp;: instrument qui fait du son sans être touché, gouverné par la distance</li>
     <li>L'État post-révolution tunisien persiste dans ses anciens réflexes&nbsp;: surveillance, coercition, institutionnalisation</li>
   </ul>
 
-  <h4>02 &middot; Géographie</h4>
-  <ul>
-    <li><strong>Hammam Lif</strong>&nbsp;: banlieue littorale de Tunis, entre mer et montagne, économiquement dégradée</li>
-    <li><strong>Tunis</strong> (centre)&nbsp;: marchés, rues, appartements surpeuplés, commissariats</li>
-    <li><strong>Villa de Salma</strong>&nbsp;: espace bourgeois fermé, refuge et prison à la fois</li>
-    <li><strong>Bougarnine</strong>&nbsp;: montagne jumelle dominant Hammam Lif, lumière pulsée entre les deux pics, destination finale</li>
-  </ul>
-  <p>Le mouvement géographique&nbsp;: domicile étouffant &rarr; appartements clients infiltrés &rarr; villa de Salma &rarr; hôpital psychiatrique &rarr; montagne. <strong>Chaque espace est plus ouvert que le précédent.</strong></p>
+  <h4>Géographie</h4>
+  <p><strong>Hammam Lif</strong> &mdash; banlieue littorale de Tunis, entre mer et montagne. <strong>Bougarnine</strong> &mdash; montagne jumelle dominant Hammam Lif, lumière blanche pulsée entre les deux pics, destination finale. Le mouvement géographique&nbsp;: domicile étouffant &rarr; appartements infiltrés &rarr; villa de Salma &rarr; hôpital psychiatrique &rarr; montagne. <strong>Chaque espace est plus ouvert que le précédent.</strong></p>
 
-  <h4>03 &middot; Classes sociales</h4>
+  <h4>Classes sociales</h4>
   <table>
     <thead><tr><th>Strate</th><th>Représentant</th><th>Trait</th></tr></thead>
     <tbody>
-      <tr><td>Pouvoir autoritaire survivant</td><td>Farouk</td><td>Ancien policier, reconverti en escroc</td></tr>
+      <tr><td>Pouvoir autoritaire survivant</td><td>Farouk</td><td>Ancien policier reconverti en escroc</td></tr>
       <tr><td>Bourgeoisie militante</td><td>Salma</td><td>Femme d'un dissident emprisonné</td></tr>
       <tr><td>Petite bourgeoisie piégée</td><td>Nadia</td><td>Grossesse, famille à charge, mère mourante</td></tr>
-      <tr><td>Classes populaires vulnérables</td><td>Clients des séances</td><td>Deuil, abus, solitude &mdash; exploités</td></tr>
-      <tr><td>Institution psychiatrique</td><td>Dr. Walid</td><td>Détachement clinique, normalisation</td></tr>
+      <tr><td>Classes populaires vulnérables</td><td>Clients des séances</td><td>Deuil, abus, solitude</td></tr>
+      <tr><td>Institution psychiatrique</td><td>Dr. Walid</td><td>Détachement clinique, pouvoir de normalisation</td></tr>
       <tr><td>Patients internés</td><td>Sondes, Marwa</td><td>Enfermement, lucidité alternative</td></tr>
     </tbody>
   </table>
 
-  <h4>04 &middot; Atmosphère sonore</h4>
+  <h4>Atmosphère sonore</h4>
   <ul>
     <li><strong>Bourdonnements, voix parasites, souffles</strong>&nbsp;: sons non-sourcés, présence constante</li>
     <li><strong>Enregistrements sur radiocassette</strong>&nbsp;: archive de surveillance, traumatismes conservés</li>
@@ -300,59 +297,53 @@ pre { background: var(--bg-2); border: 1px solid var(--bd); padding: 14px 16px; 
     <li><strong>Silence comme matière rare</strong>&nbsp;: Hend y cherche refuge, Farouk l'utilise pour contrôler</li>
   </ul>
 
-  <h4>05 &middot; Loi narrative</h4>
+  <h4>Loi narrative</h4>
   <ul>
     <li>Le don est indifférenciable du traumatisme</li>
-    <li>L'institution a toujours tort&nbsp;: Farouk exploite, Dr. Walid diagnostique, Nadia contient &mdash; tous échouent à entendre</li>
+    <li>L'institution a toujours tort &mdash; Farouk exploite, Dr. Walid diagnostique, Nadia contient&nbsp;: tous échouent à entendre</li>
     <li>La musique libère là où la parole a échoué</li>
-    <li>La femme mourante est le témoin&nbsp;: mort-grâce plutôt que mort-défaite</li>
+    <li>Le sujet central n'est pas la violence &mdash; c'est <strong>l'écoute</strong></li>
   </ul>
 
-  <h4>06 &middot; Cosmologie du seuil</h4>
+  <h4>Cosmologie du seuil</h4>
   <p>Entre surveillance et voyance, entre folie et prophétie, entre mort et passage. La montagne Bougarnine (deux pics) figure un entre-deux géographique. La laie qui met bas un enfant humain mort-né cristallise cette cosmologie&nbsp;: le monde naturel et le monde humain ont des membranes poreuses.</p>
 
-  <h4>07 &middot; Contexte politique</h4>
-  <p>Tunisie post-2011&nbsp;: révolution accomplie, institutions de l'ancien régime intactes. Farouk est un survivant du pouvoir autoritaire&nbsp;— ses méthodes (microphones, fichiers, réseaux) viennent de son passé policier. L'hôpital psychiatrique comme outil de gestion des corps déviants&nbsp;: héritage colonial et autoritaire.</p>
-
-  <h4>08 &middot; Direction narrative &mdash; Principe Jarboui</h4>
+  <h4>Principe Jarboui</h4>
   <ul>
     <li>Ne jamais choisir entre réalisme et magie&nbsp;: laisser les deux registres coexister sans résolution</li>
-    <li>Construire la libération par gradients&nbsp;: chaque espace est légèrement moins carcéral</li>
-    <li>Nommer la violence sans en faire le sujet central&nbsp;— le sujet central est <strong>l'écoute</strong></li>
-    <li>Finir sur une image ambiguë&nbsp;: départ vers la montagne, pas arrivée</li>
+    <li>Construire la libération par gradients&nbsp;: chaque espace est légèrement moins carcéral que le précédent</li>
+    <li>Finir sur une image ambiguë&nbsp;: départ vers la montagne, pas arrivée. Le mouvement est la fin.</li>
   </ul>
 
-  <h4>09 &middot; Paradoxes ouverts</h4>
+  <h4>Paradoxes ouverts</h4>
   <ul>
     <li>Les voix qu'Hend entend&nbsp;: hallucinations ou perceptions réelles&nbsp;?</li>
     <li>La laie et l'enfant mort-né&nbsp;: vision, symbole ou fait dans ce monde&nbsp;?</li>
-    <li>Farouk sait-il qu'Hend entend vraiment, ou croit-il à son dispositif&nbsp;?</li>
+    <li>Farouk sait-il qu'Hend entend vraiment&nbsp;?</li>
     <li>La lumière entre les pics de Bougarnine&nbsp;: signal, refuge ou simple géographie&nbsp;?</li>
     <li>Les patients qui suivent Hend&nbsp;: libération collective ou séquence onirique&nbsp;?</li>
   </ul>
 </section>
 
+<!-- 03 PERSONNAGES -->
 <section class="chapter" id="personnages">
   <div class="ch-header">
-    <span class="ch-num">03</span>
-    <div class="ch-rule"></div>
-    <span class="ch-name">Personnages</span>
+    <span class="ch-num">03</span><div class="ch-rule"></div><span class="ch-name">Personnages</span>
   </div>
 
-  <table style="margin-bottom:40px;">
+  <table style="margin-bottom:48px;">
     <thead><tr><th>Personnage</th><th>Âge</th><th>Rôle</th><th>Relation centrale</th></tr></thead>
     <tbody>
       <tr><td><strong>Hend</strong></td><td>25&ndash;30</td><td>Protagoniste</td><td>Fille de Farouk, élève de Salma</td></tr>
       <tr><td><strong>Farouk</strong></td><td>~60</td><td>Antagoniste principal</td><td>Père d'Hend, ancien policier</td></tr>
       <tr><td>Sonya</td><td>~55</td><td>Antagoniste secondaire</td><td>Femme de Farouk</td></tr>
-      <tr><td>Fatma (mère)</td><td>~65</td><td>Témoin-ancrage</td><td>Mère biologique d'Hend, mourante</td></tr>
+      <tr><td>Fatma (mère)</td><td>~65</td><td>Témoin-ancrage</td><td>Mère d'Hend, mourante</td></tr>
       <tr><td>Nadia</td><td>~35</td><td>Contrainte</td><td>Sœur d'Hend, enceinte</td></tr>
       <tr><td><strong>Salma</strong></td><td>~50</td><td>Alliée-mentore</td><td>Femme de dissident, résistante</td></tr>
       <tr><td><strong>Marwa</strong></td><td>~25</td><td>Alliée</td><td>Patiente psychiatrique, fausse possédée</td></tr>
       <tr><td><strong>Sondes</strong></td><td>~50</td><td>Alliée</td><td>Internée 20 ans, géomètre intérieure</td></tr>
       <tr><td>Dr. Walid</td><td>~54</td><td>Système</td><td>Psychiatre détaché</td></tr>
-      <tr><td><strong>Rachid</strong></td><td>~60</td><td>Victime / miroir</td><td>Veuf solitaire, client des séances</td></tr>
-      <tr><td>Manoubia</td><td>~45</td><td>Détonateur</td><td>Mère d'une enfant abusée</td></tr>
+      <tr><td><strong>Rachid</strong></td><td>~60</td><td>Miroir</td><td>Veuf solitaire, client des séances</td></tr>
       <tr><td>La laie</td><td>&mdash;</td><td>Présence fantastique</td><td>Sanglier sauvage, métaphore de maternité</td></tr>
     </tbody>
   </table>
@@ -362,13 +353,11 @@ pre { background: var(--bg-2); border: 1px solid var(--bd); padding: 14px 16px; 
     <div class="char-role">Protagoniste</div>
     <div class="char-body">
       <h4>Physique</h4>
-      <p>Crâne rasé (choix ou contrainte &mdash; ambiguïté maintenue), blessures cicatrisées sur les avant-bras, silhouette fine.</p>
+      <p>Crâne rasé (choix ou contrainte &mdash; ambiguïté maintenue), blessures cicatrisées sur les avant-bras.</p>
       <h4>Don</h4>
-      <p>Entend des sons au-delà des microphones de son père&nbsp;: voix, traumatismes, ce que les gens ne disent pas.</p>
+      <p>Entend des sons au-delà des microphones de son père&nbsp;: voix, traumatismes, ce que les gens ne disent pas. Elle s'inflige des blessures pour faire taire les voix. <strong>Le theremin est son corps externalisé</strong>&nbsp;: il émet sans être touché, comme elle entend sans qu'on lui parle.</p>
       <h4>Arc</h4>
-      <p>Esclave du dispositif de Farouk &rarr; rupture (séance de Manoubia) &rarr; enfermement psychiatrique &rarr; fuite &rarr; apprentissage du theremin &rarr; libération par la musique.</p>
-      <h4>Contradiction centrale</h4>
-      <p>Elle s'inflige des blessures pour faire taire les voix. Son don est indissociable de sa souffrance. <strong>Le theremin est son corps externalisé</strong>&nbsp;: il émet sans qu'on le touche, comme elle entend sans qu'on lui parle.</p>
+      <p>Esclave du dispositif de Farouk &rarr; rupture (séance de Manoubia) &rarr; hôpital psychiatrique &rarr; fuite &rarr; apprentissage du theremin &rarr; procession vers Bougarnine.</p>
     </div>
   </div>
 
@@ -376,7 +365,7 @@ pre { background: var(--bg-2); border: 1px solid var(--bd); padding: 14px 16px; 
     <div class="char-name">Farouk</div>
     <div class="char-role">Antagoniste principal</div>
     <div class="char-body">
-      <p>Ancien policier du régime, ~60 ans. Réseau de microphones cachés dans les maisons des clients, fichiers compilés, informations glissées à Hend via oreillette. Ses méthodes viennent directement de son passé policier. <strong>Ambiguïté centrale&nbsp;: croit-il que sa fille a un don réel&nbsp;? Le film ne tranche pas.</strong></p>
+      <p>Ancien policier du régime, ~60 ans. Réseau de microphones cachés, fichiers compilés, informations glissées à Hend via oreillette. Ses méthodes viennent directement de son passé policier. <strong>Ambiguïté centrale&nbsp;: croit-il que sa fille a un don réel&nbsp;? Le film ne tranche pas.</strong></p>
     </div>
   </div>
 
@@ -384,37 +373,25 @@ pre { background: var(--bg-2); border: 1px solid var(--bd); padding: 14px 16px; 
     <div class="char-name">Salma</div>
     <div class="char-role">Alliée-mentore</div>
     <div class="char-body">
-      <p>Villa bourgeoise, ~50 ans. Femme d'un dissident emprisonné. <strong>Rôle double</strong>&nbsp;: elle utilise Hend pour obtenir des informations sur ses ennemis, mais lui offre aussi une sortie&nbsp;: le theremin, la musique, une autre façon d'exister. Elle confie à Hend l'instrument de son mari emprisonné.</p>
+      <p>Villa bourgeoise, ~50 ans. Femme d'un dissident emprisonné. <strong>Rôle double&nbsp;:</strong> elle utilise Hend pour des informations sur ses ennemis, mais lui offre aussi une sortie &mdash; le theremin, une autre façon d'exister. Elle confie à Hend l'instrument de son mari emprisonné.</p>
     </div>
   </div>
 
   <div class="char-card">
     <div class="char-name">Marwa</div>
-    <div class="char-role">Alliée &middot; patiente psychiatrique</div>
+    <div class="char-role">Alliée &middot; fausse possédée</div>
     <div class="char-body">
-      <p>Crâne rasé (comme Hend &mdash; signe de communauté). <strong>Fausse possédée</strong>&nbsp;: elle joue la folie pour survivre dans l'institution. Lucide, pragmatique, stratège. Aide Hend à s'échapper.</p>
-      <blockquote style="margin-top:12px;">
-        <p>Ce que personne ne veut être un prophète. C'est le travail le moins payé de toute l'histoire de l'humanité.</p>
-      </blockquote>
-    </div>
-  </div>
-
-  <div class="char-card">
-    <div class="char-name">Sondes</div>
-    <div class="char-role">Alliée &middot; internée 20 ans</div>
-    <div class="char-body">
-      <p>Trace des schémas géométriques sur les murs. Voit des structures invisibles dans l'espace. Son acte de solidarité lors de l'évasion est muet et précis&nbsp;: elle crée la diversion qui permet à Hend de fuir.</p>
+      <p>Crâne rasé (comme Hend &mdash; signe de communauté). Elle joue la folie pour survivre dans l'institution. Lucide, pragmatique, stratège. Elle aide Hend à s'échapper.</p>
+      <blockquote style="margin-top:14px;"><p>Ce que personne ne veut être un prophète. C'est le travail le moins payé de toute l'histoire de l'humanité.</p></blockquote>
     </div>
   </div>
 
   <div class="char-card">
     <div class="char-name">Rachid</div>
-    <div class="char-role">Victime / miroir</div>
+    <div class="char-role">Victime &middot; miroir</div>
     <div class="char-body">
-      <p>Veuf solitaire, parle à une chaise vide (sa femme morte). Client des séances de Farouk. <strong>Le seul client qui perçoit qu'Hend est réelle, pas performée.</strong></p>
-      <blockquote style="margin-top:12px;">
-        <p>Et toi&hellip; qui t'écoute&nbsp;?</p>
-      </blockquote>
+      <p>Veuf solitaire, parle à une chaise vide (sa femme morte). <strong>Le seul client qui perçoit qu'Hend est réelle, pas performée.</strong></p>
+      <blockquote style="margin-top:14px;"><p>Et toi&hellip; qui t'écoute&nbsp;?</p></blockquote>
     </div>
   </div>
 
@@ -422,16 +399,15 @@ pre { background: var(--bg-2); border: 1px solid var(--bd); padding: 14px 16px; 
     <div class="char-name">La laie</div>
     <div class="char-role">Présence fantastique</div>
     <div class="char-body">
-      <p>Statut ontologique ambigu&nbsp;: fantastique ou réel&nbsp;? La laie (sanglier sauvage gestante) accompagne Hend dans plusieurs séquences. Elle accouche d'un enfant humain mort-né. Maternité impossible, passage entre règnes, l'enfant que personne ne peut porter dans ce monde.</p>
+      <p>Statut ontologique ambigu. La laie (sanglier sauvage gestante) accompagne Hend dans plusieurs séquences. Elle accouche d'un enfant humain mort-né. Maternité impossible, passage entre règnes.</p>
     </div>
   </div>
 </section>
 
+<!-- 04 IMAGES -->
 <section class="chapter" id="images">
   <div class="ch-header">
-    <span class="ch-num">04</span>
-    <div class="ch-rule"></div>
-    <span class="ch-name">Images</span>
+    <span class="ch-num">04</span><div class="ch-rule"></div><span class="ch-name">Images</span>
   </div>
   <h2>Teaser Pool</h2>
 
@@ -492,11 +468,10 @@ pre { background: var(--bg-2); border: 1px solid var(--bd); padding: 14px 16px; 
   </div>
 </section>
 
+<!-- 05 FRAGMENTS -->
 <section class="chapter" id="fragments">
   <div class="ch-header">
-    <span class="ch-num">05</span>
-    <div class="ch-rule"></div>
-    <span class="ch-name">Fragments</span>
+    <span class="ch-num">05</span><div class="ch-rule"></div><span class="ch-name">Fragments</span>
   </div>
   <h2>Dialogues</h2>
   <div class="fragments-grid">
@@ -543,25 +518,23 @@ pre { background: var(--bg-2); border: 1px solid var(--bd); padding: 14px 16px; 
   </div>
 </section>
 
+<!-- 06 LIEUX -->
 <section class="chapter" id="lieux">
   <div class="ch-header">
-    <span class="ch-num">06</span>
-    <div class="ch-rule"></div>
-    <span class="ch-name">Lieux</span>
+    <span class="ch-num">06</span><div class="ch-rule"></div><span class="ch-name">Lieux</span>
   </div>
 
-  <table style="margin-bottom:36px;">
-    <thead><tr><th>Lieu</th><th>Type</th><th>Fonction narrative</th><th>Tonalité</th></tr></thead>
+  <table style="margin-bottom:40px;">
+    <thead><tr><th>Lieu</th><th>Type</th><th>Fonction</th><th>Tonalité</th></tr></thead>
     <tbody>
       <tr><td>Maison familiale (Hammam Lif)</td><td>INT/EXT</td><td>Prison initiale</td><td>Étouffante, surveillée</td></tr>
-      <tr><td>Appartements des clients</td><td>INT</td><td>Terrain d'opération de Farouk</td><td>Intimes et violés</td></tr>
+      <tr><td>Appartements des clients</td><td>INT</td><td>Terrain de Farouk</td><td>Intimes et violés</td></tr>
       <tr><td>Piscine municipale (vide)</td><td>INT</td><td>Sanctuaire de silence</td><td>Froide, apaisante</td></tr>
       <tr><td>Villa de Salma</td><td>INT/EXT</td><td>Refuge ambigu</td><td>Bourgeoise, musicale</td></tr>
       <tr><td>Conservatoire</td><td>INT</td><td>Révélation du theremin</td><td>Sombre, acoustique</td></tr>
       <tr><td>Hôpital psychiatrique</td><td>INT/EXT</td><td>Enfermement / communauté</td><td>Institutionnel, paradoxalement humain</td></tr>
-      <tr><td>Rues de Hammam Lif</td><td>EXT</td><td>Transit, fuite, banlieue</td><td>Terrain vague, vivant</td></tr>
-      <tr><td>Forêt au pied de Bougarnine</td><td>EXT</td><td>Seuil vers la liberté</td><td>Aride, nocturne, sauvage</td></tr>
-      <tr><td>Bougarnine</td><td>EXT</td><td>Destination finale</td><td>Lumineuse, ambiguë, ouverte</td></tr>
+      <tr><td>Forêt de Bougarnine</td><td>EXT</td><td>Seuil vers la liberté</td><td>Aride, nocturne, sauvage</td></tr>
+      <tr><td>Bougarnine (montagne)</td><td>EXT</td><td>Destination finale</td><td>Lumineuse, ambiguë, ouverte</td></tr>
     </tbody>
   </table>
 
@@ -581,44 +554,40 @@ Marwa + Sondes → évasion
 Bougarnine
     → horizon ouvert, jamais atteint</pre>
 
-  <h4>Lieux notables</h4>
-  <p><strong>Piscine municipale vide</strong>&nbsp;: eau absente comme présence. Écho parfait, silence amplifié. Premier espace où personne ne surveille Hend.</p>
-  <p><strong>Hôpital psychiatrique</strong>&nbsp;: chlore, lumière froide, métal. Territoire de l'institution, mais paradoxalement le lieu où Hend rencontre ses seules alliées. La cuisine de service (accessible via une grille) devient le point de fuite.</p>
-  <p><strong>Bougarnine</strong>&nbsp;: présence constante dans le cadre en extérieur. La lumière blanche pulsée entre les deux sommets est un motif récurrent. <strong>Ils n'y arrivent pas pendant le film. Le chemin est la fin.</strong></p>
+  <p style="margin-top:24px;"><strong>Piscine municipale vide</strong> &mdash; écho parfait, silence amplifié. Premier espace où personne ne surveille Hend. L'eau absente est une présence.</p>
+  <p><strong>Bougarnine</strong> &mdash; présence constante dans le cadre en extérieur. La lumière blanche pulsée entre les deux sommets est un motif récurrent. <strong>Ils n'y arrivent pas pendant le film. Le chemin est la fin.</strong></p>
 </section>
 
+<!-- 07 FINS -->
 <section class="chapter" id="fins">
   <div class="ch-header">
-    <span class="ch-num">07</span>
-    <div class="ch-rule"></div>
-    <span class="ch-name">Fins</span>
+    <span class="ch-num">07</span><div class="ch-rule"></div><span class="ch-name">Fins</span>
   </div>
 
   <div class="ending">
     <div class="ending-label">Fin A &mdash; Fin principale du scénario</div>
     <h3>La procession</h3>
     <p>Hend récupère le theremin dans la villa de Salma et s'échappe de l'hôpital psychiatrique. Elle joue à l'entrée de l'établissement. Le son se propage dans les couloirs. Les patients &mdash; Sondes, Marwa, d'autres &mdash; émergent. Ils marchent ensemble. Personne ne parle. Seuls les pas, le vent, la fréquence du theremin. La procession s'ébranle vers Bougarnine à l'aube. La lumière blanche pulse entre les deux pics.</p>
-    <p style="margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--t3);">Registre&nbsp;: ambigu &mdash; libération réelle ou séquence onirique&nbsp;? Tonalité&nbsp;: lumineuse, calme. Ni victoire ni défaite. Départ.</p>
+    <p style="font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-top:10px;">Registre ambiguë &mdash; libération réelle ou séquence onirique&nbsp;? Tonalité&nbsp;: lumineuse, calme. Ni victoire ni défaite. Départ.</p>
   </div>
 
   <div class="ending">
     <div class="ending-label">Fin B &mdash; Climax intégré</div>
     <h3>La mort de la mère</h3>
-    <p>Hend joue du theremin au chevet de sa mère mourante dans la chambre de Nadia. Le son immobilise la violence du foyer. Après la pièce, Hend part. Nadia entre dans la chambre et trouve sa mère apaisée, les yeux qui se ferment. Elle meurt au son de la musique, légèrement souriante.</p>
-    <p style="margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--t3);">Registre&nbsp;: réaliste, intime, déchirant et doux. La mort comme grâce.</p>
+    <p>Hend joue du theremin au chevet de sa mère mourante. Le son immobilise la violence du foyer. Nadia entre dans la chambre et trouve sa mère apaisée, les yeux qui se ferment. Elle meurt au son de la musique, légèrement souriante.</p>
+    <p style="font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-top:10px;">Registre&nbsp;: réaliste, intime. La mort comme grâce. Le theremin accompagne le passage.</p>
   </div>
 
   <div class="info-box">
-    <h4 style="margin-top:0;">Note de lecture</h4>
-    <p>Les deux fins ne sont pas alternatives&nbsp;: elles sont <strong>successives</strong> dans le scénario. La mort de la mère est le climax émotionnel&nbsp;; la procession est la résolution narrative. Le film ne choisit pas entre le deuil et la libération. <strong>La fin reste ouverte</strong>&nbsp;: le mouvement est la fin.</p>
+    <h4>Note de lecture</h4>
+    <p>Les deux fins ne sont pas alternatives &mdash; elles sont <strong>successives</strong> dans le scénario. La mort de la mère est le climax émotionnel&nbsp;; la procession est la résolution narrative. <strong>La fin reste ouverte</strong>&nbsp;: le mouvement est la fin.</p>
   </div>
 </section>
 
+<!-- 08 RÉFÉRENCES -->
 <section class="chapter" id="refs">
   <div class="ch-header">
-    <span class="ch-num">08</span>
-    <div class="ch-rule"></div>
-    <span class="ch-name">Références</span>
+    <span class="ch-num">08</span><div class="ch-rule"></div><span class="ch-name">Références</span>
   </div>
 
   <h3>Cinéma</h3>
@@ -629,7 +598,6 @@ Bougarnine
       <tr><td><strong>Under the Skin</strong> &mdash; Jonathan Glazer</td><td>Protagoniste féminin hypersensoriel, monde ordinaire devenu étranger</td></tr>
       <tr><td><strong>The Fits</strong> &mdash; Anna Rose Holmer</td><td>Jeune femme, corps qui échappe au contrôle, collectivité féminine</td></tr>
       <tr><td><strong>Atlantique</strong> &mdash; Mati Diop</td><td>Afrique, esprits, féminité, mer comme horizon impossible</td></tr>
-      <tr><td><strong>Capernaüm</strong> &mdash; Nadine Labaki</td><td>Liban, institution, enfants dans des systèmes qui broient</td></tr>
       <tr><td><strong>Ratcatcher</strong> &mdash; Lynne Ramsay</td><td>Réalisme magique, banlieue dégradée, enfant vulnérable</td></tr>
       <tr><td><strong>A Woman Under the Influence</strong> &mdash; Cassavetes</td><td>Femme diagnostiquée folle par son entourage, institution vs intimité</td></tr>
     </tbody>
@@ -642,7 +610,6 @@ Bougarnine
       <tr><td><strong>Clara Rockmore</strong> (theremin)</td><td>Pionnière de l'instrument, modèle de maîtrise sans contact</td></tr>
       <tr><td><strong>Merzbow</strong> (bruit)</td><td>Texture sonore extrême &mdash; surcharge sensorielle d'Hend</td></tr>
       <tr><td><strong>Grouper</strong> (ambient)</td><td>Voix étouffée, deuil, féminité, hantise</td></tr>
-      <tr><td><strong>Lubomyr Melnyk</strong> (piano continu)</td><td>Son continu comme texture narrative, non-résolution</td></tr>
       <tr><td><strong>Anouar Brahem</strong> (oud)</td><td>Référence tunisienne, mélancolie, silence entre les notes</td></tr>
     </tbody>
   </table>
@@ -653,12 +620,12 @@ Bougarnine
     <tbody>
       <tr><td><strong>Clarice Lispector</strong></td><td>Corps féminin comme sismographe du monde, prose-sensation</td></tr>
       <tr><td><strong>Assia Djebar</strong></td><td>Femmes du Maghreb, voix étouffées, espace entre langue et silence</td></tr>
-      <tr><td><strong>Frantz Fanon</strong> &mdash; Les Damnés de la terre</td><td>Institution psychiatrique comme outil colonial, normalisation par enfermement</td></tr>
+      <tr><td><strong>Frantz Fanon</strong> &mdash; Les Damnés de la terre</td><td>Institution psychiatrique comme outil colonial</td></tr>
       <tr><td><strong>R.D. Laing</strong> &mdash; The Divided Self</td><td>Schizophrénie comme réponse rationnelle à un monde irrationnel</td></tr>
     </tbody>
   </table>
 
-  <blockquote style="margin-top:32px;">
+  <blockquote style="margin-top:40px;">
     <p>On ne joue pas du theremin. On apprend à mesurer la distance.</p>
     <div class="q-attr">Salma &mdash; Thérémine</div>
   </blockquote>
