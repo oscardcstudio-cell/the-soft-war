@@ -27,7 +27,6 @@ export default function UploadZone() {
         const data = await res.json();
         if (!res.ok) throw new Error(data?.error ?? `HTTP ${res.status}`);
         setState({ kind: "success", projectId: data.projectId, filename: data.filename });
-        // Refresh the projects list
         router.refresh();
       } catch (err) {
         setState({
@@ -71,18 +70,32 @@ export default function UploadZone() {
   );
 
   const isActive = state.kind === "dragging" || state.kind === "uploading";
+  const isSuccess = state.kind === "success";
+  const isError = state.kind === "error";
 
   return (
     <div
       onDrop={onDrop}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
-      onClick={() => inputRef.current?.click()}
-      className={`
-        border-2 border-dashed rounded-lg p-12 text-center cursor-pointer
-        transition-colors select-none
-        ${isActive ? "border-amber-400 bg-amber-400/5" : "border-zinc-800 hover:border-zinc-600 bg-zinc-900/40"}
-      `}
+      onClick={() => state.kind !== "success" && inputRef.current?.click()}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && inputRef.current?.click()}
+      aria-label="Upload a script file"
+      className={[
+        "border p-10 sm:p-14 text-center cursor-pointer select-none",
+        "transition-colors duration-150",
+        "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent",
+        isActive
+          ? "border-accent bg-paper-2"
+          : isSuccess
+          ? "border-success cursor-default"
+          : isError
+          ? "border-error"
+          : "border-rule hover:border-ink-3 bg-paper-2",
+      ].join(" ")}
+      style={{ transitionTimingFunction: "var(--ease-out)" }}
     >
       <input
         ref={inputRef}
@@ -91,36 +104,48 @@ export default function UploadZone() {
         onChange={onFileSelected}
         className="hidden"
       />
+
       {state.kind === "idle" && (
-        <>
-          <p className="text-zinc-300 font-serif text-xl mb-1">Drop your script here</p>
-          <p className="text-xs text-zinc-500 font-mono">
+        <div>
+          <p className="font-serif font-light text-2xl text-ink mb-2">
+            Drop your script here
+          </p>
+          <p className="text-[10px] text-ink-3 tracking-[0.1em]">
             .docx · .pdf · .fountain · .txt — 10 MB max
           </p>
-        </>
+        </div>
       )}
+
       {state.kind === "dragging" && (
-        <p className="text-amber-300 font-serif text-xl">Release to upload…</p>
-      )}
-      {state.kind === "uploading" && (
-        <p className="text-zinc-300 font-mono text-sm">
-          Uploading <span className="text-amber-300">{state.filename}</span>…
+        <p className="font-serif font-light text-2xl text-accent">
+          Release to upload
         </p>
       )}
+
+      {state.kind === "uploading" && (
+        <div>
+          <p className="text-[12px] text-ink-2">Uploading…</p>
+          <p className="text-[10px] text-accent mt-1">{state.filename}</p>
+        </div>
+      )}
+
       {state.kind === "success" && (
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-emerald-300 font-serif text-lg">Uploaded.</p>
-          <p className="text-xs text-zinc-500 font-mono">
-            {state.filename} → project{" "}
-            <span className="text-zinc-300">{state.projectId}</span>
+        <div>
+          <p className="font-serif font-light text-xl text-success mb-1.5">
+            Uploaded.
           </p>
-          <p className="text-xs text-zinc-600">
+          <p className="text-[10px] text-ink-3">
+            {state.filename}{" "}
+            <span className="text-ink-2">→ project {state.projectId}</span>
+          </p>
+          <p className="text-[10px] text-ink-3 mt-1">
             Queued in backlog. Run Claude Code to process.
           </p>
         </div>
       )}
+
       {state.kind === "error" && (
-        <p className="text-red-400 font-mono text-sm">Error : {state.message}</p>
+        <p className="text-[12px] text-error">Error: {state.message}</p>
       )}
     </div>
   );
