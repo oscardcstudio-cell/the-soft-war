@@ -22,8 +22,16 @@ export async function GET(
   let files: string[];
   try {
     files = await fs.readdir(uploadDir);
-  } catch {
-    return new NextResponse("not found", { status: 404 });
+  } catch (e) {
+    const diag = {
+      DATA_ROOT,
+      UPLOADS_DIR,
+      uploadDir,
+      error: String(e),
+      cwd: process.cwd(),
+      DATA_DIR_env: process.env.DATA_DIR ?? "(unset)",
+    };
+    return NextResponse.json({ error: "not found", diag }, { status: 404 });
   }
 
   const docx = files.find((f) => f.endsWith(".docx"));
