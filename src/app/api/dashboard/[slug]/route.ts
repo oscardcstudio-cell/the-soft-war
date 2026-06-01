@@ -9,8 +9,9 @@ const DATA_ROOT = process.env.DATA_DIR ?? process.cwd();
 const PROJECTS_DIR_VOLUME = path.join(DATA_ROOT, "projects");
 const PROJECTS_DIR_REPO = path.join(process.cwd(), "projects");
 
-// Serves the rich dashboard.html of a project (produced by meta-ui-ux / Claude Code).
-// Looked up in the volume first, then in the repo-committed projects.
+// Serves the rich dashboard.html of a project.
+// Repo-committed dashboards take priority over volume-generated ones so that
+// hand-crafted designs always win. Volume is fallback for pipeline-generated dashboards.
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ slug: string }> },
@@ -20,7 +21,7 @@ export async function GET(
     return new NextResponse("bad slug", { status: 400 });
   }
 
-  for (const base of [PROJECTS_DIR_VOLUME, PROJECTS_DIR_REPO]) {
+  for (const base of [PROJECTS_DIR_REPO, PROJECTS_DIR_VOLUME]) {
     const file = path.join(base, slug, "dashboard.html");
     try {
       const html = await fs.readFile(file, "utf8");
