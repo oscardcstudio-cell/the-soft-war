@@ -64,3 +64,4 @@ Thumbs.db
 
 # Drizzle local journal
 drizzle/meta/_journal.json.bak
+*.pdf
