@@ -160,8 +160,13 @@ blockquote p { font-style: italic; font-size: 1.3rem; line-height: 1.65; color: 
 .info-box h4 { margin-top: 0; }
 .info-box p { font-size: 0.9375rem; }
 
-/* ── PRE ── */
-pre { background: oklch(94% 0 0); padding: 18px 20px; overflow-x: auto; font-family: var(--mono); font-size: 11px; line-height: 1.6; color: var(--ink-2); margin: 16px 0; }
+/* ── POWER FLOW — hiérarchie narrative, jamais un <pre> ── */
+.power-flow { display: flex; flex-direction: column; gap: 24px; padding: 4px 0 8px; }
+.pf-group { display: flex; flex-direction: column; gap: 2px; }
+.pf-node { font-family: var(--serif); font-size: 1rem; font-weight: 400; color: var(--ink); }
+.pf-arrow { font-family: var(--mono); font-size: 9px; color: var(--red); letter-spacing: 0.06em; padding-left: 16px; line-height: 2.4; }
+.pf-leaf { font-family: var(--serif); font-size: 0.9375rem; color: var(--ink-2); }
+.pf-result { font-family: var(--serif); font-size: 0.9375rem; color: var(--ink); font-style: italic; }
 
 /* ── FOOTER ── */
 .footer { border-top: 1px solid var(--rule); padding: 24px 0; font-family: var(--mono); font-size: 9px; color: var(--ink-3); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; letter-spacing: 0.08em; }
@@ -421,20 +426,27 @@ pre { background: oklch(94% 0 0); padding: 18px 20px; overflow-x: auto; font-fam
     </tbody>
   </table>
   <h4>Géographie du pouvoir</h4>
-  <pre>Farouk (maison)
-    ↓ contrôle
-Appartements clients (infiltrés)
-
-Salma (villa)
-    ↓ instrumentalise mais libère
-Conservatoire → theremin
-
-Hôpital (Dr. Walid)
-    ↓ enferme
-Marwa + Sondes → évasion
-
-Bougarnine
-    → horizon ouvert, jamais atteint</pre>
+  <div class="power-flow">
+    <div class="pf-group">
+      <div class="pf-node">Farouk (maison)</div>
+      <div class="pf-arrow">↓ contrôle</div>
+      <div class="pf-leaf">Appartements clients (infiltrés)</div>
+    </div>
+    <div class="pf-group">
+      <div class="pf-node">Salma (villa)</div>
+      <div class="pf-arrow">↓ instrumentalise mais libère</div>
+      <div class="pf-result">Conservatoire → theremin</div>
+    </div>
+    <div class="pf-group">
+      <div class="pf-node">Hôpital (Dr. Walid)</div>
+      <div class="pf-arrow">↓ enferme</div>
+      <div class="pf-result">Marwa + Sondes → évasion</div>
+    </div>
+    <div class="pf-group">
+      <div class="pf-node">Bougarnine</div>
+      <div class="pf-arrow">→ horizon ouvert, jamais atteint</div>
+    </div>
+  </div>
 </section>
 
 <!-- 07 FINS -->
