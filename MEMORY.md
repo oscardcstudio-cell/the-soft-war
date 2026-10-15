@@ -78,3 +78,9 @@ Mémoire vivante du projet. Lue en premier, mise à jour en fin de chaque sessio
 - Projet `projects/jzM3WbGyTz/` = Parasite (Bong Joon Ho, 2019), 8 modules, ancres S{n} = scène. Source : scénario anglais FYC Neon, décrit dans `sources/parasite-2019/SOURCE.md`. Le PDF reste dans `uploads/` (gitignoré) : texte protégé, repo public.
 - Citations limitées à 8 répliques d'une ligne (droit de courte citation). Mise en ligne publique = décision d'Oscar (œuvre protégée).
 - Gate : branche locale `demo/parasite` NON poussée.
+
+### 2026-10-15 (suite) — Parasite en ligne + Intellectual Source fusionné
+
+- Sur go d'Oscar (relayé) : bible Parasite en charte Mecene (`projects/jzM3WbGyTz/dashboard.html`, agent ui-craft) poussée sur main → Railway.
+- `intellectual-source/` = second outil, copie neuve générique sans historique ; le repo d'origine `Intellectual_Source` reste privé et intact. Interdits publics : profil du cinéaste, scripts, notes de session, mémoires tiers, .env, .rcc-*.json (cf. `intellectual-source/.gitignore`).
+- Point ouvert : `projects/[id retiré]/` (bible d'un scénario non publié d'un tiers) est public dans ce repo depuis juin. À trancher par Oscar.
