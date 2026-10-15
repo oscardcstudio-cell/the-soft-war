@@ -83,4 +83,4 @@ Mémoire vivante du projet. Lue en premier, mise à jour en fin de chaque sessio
 
 - Sur go d'Oscar (relayé) : bible Parasite en charte Mecene (`projects/jzM3WbGyTz/dashboard.html`, agent ui-craft) poussée sur main → Railway.
 - `intellectual-source/` = second outil, copie neuve générique sans historique ; le repo d'origine `Intellectual_Source` reste privé et intact. Interdits publics : profil du cinéaste, scripts, notes de session, mémoires tiers, .env, .rcc-*.json (cf. `intellectual-source/.gitignore`).
-- Point ouvert : `projects/[id retiré]/` (bible d'un scénario non publié d'un tiers) est public dans ce repo depuis juin. À trancher par Oscar.
+- Règle Oscar : le travail d'un tiers non publié ne va jamais dans ce repo public. Bible retirée du dernier état le 2026-10-15 (historique git non réécrit, décision Oscar).
