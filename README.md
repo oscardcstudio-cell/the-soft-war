@@ -1,6 +1,15 @@
 # The soft War
 
-> Upload a film script, get the full development bible (worldbuilding, characters, locations, teaser pool, fragments, possible endings, references, dashboard) as a shareable web page.
+Two open-source tools for screenwriters, in one repo:
+
+| Tool | What it does | Where |
+|---|---|---|
+| **The soft War** | Upload a film script, get the full development bible (worldbuilding, characters, locations, teaser pool, fragments, possible endings, references) as a shareable web page | repo root (Next.js app) |
+| **Intellectual Source** | A Claude Code agent for auteur cinema: critical reading of a script in progress, and endings proposed in the manner of Grandrieux, von Trier, Haneke and Tarr | [`intellectual-source/`](intellectual-source/) (French) |
+
+---
+
+## The soft War
 
 Built with Next.js 16 + Mastra + Anthropic Claude + BullMQ on Railway.
 

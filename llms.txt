@@ -23,6 +23,9 @@
 - src/modules/ — 10 modules pipeline indépendants
 - worker/ — worker BullMQ standalone
 - drizzle/ — migrations DB
+- projects/<slug>/ — bibles générées (.md + dashboard.html optionnel)
+- sources/ — provenance et droits des scripts de démo (jamais le texte protégé)
+- intellectual-source/ — second outil : agent Claude Code de lecture critique (cinéma d'auteur)
 
 ## Services Railway
 - the-soft-war-web (Next.js)

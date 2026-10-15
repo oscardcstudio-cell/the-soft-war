@@ -1,0 +1,18 @@
+{
+  "name": "intellectual-source-console",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Console + chat distant pour corpus exigeants (scénario, mémoire, thèse). Consomme remote-claude-chat (jamais de copie). Local = memory store ; Railway = Postgres.",
+  "scripts": {
+    "start": "node server.mjs",
+    "relay": "node server.mjs",
+    "worker": "rcc-worker"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.2",
+    "express": "^4.19.2",
+    "pg": "^8.13.1",
+    "remote-claude-chat": "github:oscardcstudio-cell/remote-claude-chat#v0.2.4"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "projects": [
+    {
+      "id": "exemple-scenario",
+      "repo": "/chemin/vers/ton/repo",
+      "branch": "rcc/exemple-scenario",
+      "cwd": "works/exemple-scenario"
+    }
+  ]
+}

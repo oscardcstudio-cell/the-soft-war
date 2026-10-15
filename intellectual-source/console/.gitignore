@@ -1,0 +1,6 @@
+node_modules/
+package-lock.json
+.rcc-sessions.json
+.rcc-confined-settings.json
+start-worker.cmd
+.env

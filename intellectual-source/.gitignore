@@ -1,0 +1,10 @@
+# Matériau privé du cinéaste accompagné : jamais dans le repo public
+profil_auteur.md
+notes_session/
+scripts/
+works/
+*.pdf
+*.docx
+.env
+.env.*
+.rcc-*.json

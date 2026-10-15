@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mes agents</title>
+<style>
+  :root{--bg:#0c0c0e;--panel:#141416;--side:#101012;--line:#26262a;--ink:#ece7dd;--mut:#8d877c;--accent:#c8a86b}
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,sans-serif;display:flex;flex-direction:column}
+  header{padding:13px 22px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:12px}
+  header h1{font-size:16px;margin:0;font-weight:650;font-family:Georgia,serif}
+  header .tag{margin-left:auto;color:var(--accent);font-family:ui-monospace,monospace;font-size:11px;border:1px solid var(--line);padding:3px 9px;border-radius:99px}
+  main{flex:1;display:grid;grid-template-columns:230px 1fr;min-height:0}
+  aside{background:var(--side);border-right:1px solid var(--line);overflow-y:auto;padding:10px}
+  aside .lbl{font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--mut);padding:8px 10px}
+  aside button{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;background:none;border:0;border-radius:8px;color:var(--ink);padding:9px 11px;cursor:pointer;margin-bottom:2px}
+  aside button:hover{background:#17171a}
+  aside button.active{background:#1c1c20}
+  aside button .nm{font-size:13.5px;font-weight:600}
+  aside button .dot{width:7px;height:7px;border-radius:50%;background:var(--a,#c8a86b);display:inline-block;margin-right:7px}
+  .chat{display:flex;flex-direction:column;min-height:0;background:var(--panel)}
+  #chat{flex:1;min-height:0}
+  .notice{padding:30px;color:var(--mut);font-size:14px;line-height:1.6;max-width:560px}
+  .notice b{color:var(--ink)}
+</style>
+</head>
+<body>
+  <header>
+    <h1>Mes agents</h1>
+    <span id="wstatus" title="" style="font-size:13px;color:#8d877c">●</span>
+    <span class="tag" id="tag">·</span>
+  </header>
+  <div id="banner" style="display:none;padding:9px 22px;background:#3a1d1d;color:#f0c0c0;font-size:13px;border-bottom:1px solid #5a2a2a"></div>
+  <main>
+    <aside id="side"><div class="lbl">Agents</div></aside>
+    <section class="chat"><div id="chat"><div class="notice">Chargement…</div></div></section>
+  </main>
+
+  <script src="/config.js"></script>
+  <script type="module">
+    import { mountChatTab } from "/rcc/mountChatTab.js";
+    const cfg = window.RCC_CONFIG || {};
+    const TK = "rcc:token";
+    const qp = new URLSearchParams(location.search).get("token");
+    if (qp) { try { localStorage.setItem(TK, qp); } catch {} history.replaceState(null, "", location.pathname); }
+    const token = (() => { try { return localStorage.getItem(TK); } catch { return null; } })();
+
+    const sideEl = document.getElementById("side"), chatEl = document.getElementById("chat");
+    const notice = (t) => { chatEl.innerHTML = `<div class="notice">${t}</div>`; };
+
+    if (!token) { notice('Accès par lien personnel. Ouvre l\'URL qu\'on t\'a transmise (jeton <code>?token=…</code>).'); throw 0; }
+
+    const r = await fetch("/agents", { headers: { "x-access-token": token } });
+    if (!r.ok) { notice("Jeton invalide ou révoqué. Demande un nouveau lien à l'administrateur."); throw 0; }
+    const { agents } = await r.json();
+    document.getElementById("tag").textContent = `${agents.length} agent(s)`;
+
+    if (!agents.length) { notice("Aucun agent en ligne. <b>La machine hôte doit faire tourner le worker</b> (il publie ses agents)."); throw 0; }
+
+    let activeChat = null;
+    function open(a, btn) {
+      [...sideEl.querySelectorAll("button")].forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      document.documentElement.style.setProperty("--accent", a.accent || "#c8a86b");
+      if (activeChat) activeChat.destroy();
+      activeChat = mountChatTab(chatEl, {
+        projectId: a.id, accessToken: token, apiBase: cfg.apiBase, convId: `${a.id}__main`,
+        brand: { projectName: a.label || a.id, accent: a.accent || "#c8a86b" },
+      });
+    }
+
+    agents.forEach((a, i) => {
+      const b = document.createElement("button");
+      b.innerHTML = `<span class="nm"><span class="dot" style="--a:${a.accent || "#c8a86b"}"></span>${a.label || a.id}</span>`;
+      b.onclick = () => open(a, b);
+      sideEl.appendChild(b);
+      if (i === 0) setTimeout(() => open(a, b), 0);
+    });
+
+    // Debug live : statut du worker (machine hôte). Explique le "réfléchit" sans fin.
+    async function pollStatus() {
+      try {
+        const x = await (await fetch("/agents", { headers: { "x-access-token": token } })).json();
+        const dot = document.getElementById("wstatus"), ban = document.getElementById("banner");
+        if (x.workerOnline) { dot.style.color = "#6f9b6f"; dot.title = "worker en ligne"; ban.style.display = "none"; }
+        else {
+          dot.style.color = "#e5534b"; dot.title = "worker hors ligne";
+          ban.style.display = "block";
+          const ago = x.lastSeenAgoMs ? ` (vu il y a ${Math.round(x.lastSeenAgoMs / 1000)}s)` : "";
+          ban.innerHTML = `⚠ Worker hors ligne${ago} — la machine hôte doit faire tourner le worker. Tes messages attendent en file et partiront dès qu'il est en ligne.`;
+        }
+      } catch {}
+    }
+    pollStatus(); setInterval(pollStatus, 5000);
+  </script>
+</body>
+</html>
