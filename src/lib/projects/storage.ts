@@ -112,6 +112,20 @@ export async function saveScript(file: File): Promise<SavedScript> {
   };
 }
 
+// First "# Heading" of a project's _meta.md (repo or volume), if any.
+async function readMetaTitle(projectId: string): Promise<string | null> {
+  for (const base of [PROJECTS_DIR_VOLUME, PROJECTS_DIR_REPO]) {
+    try {
+      const md = await fs.readFile(path.join(base, projectId, "_meta.md"), "utf8");
+      const match = md.match(/^#\s+(.+)$/m);
+      if (match) return match[1].trim();
+    } catch {
+      // try next
+    }
+  }
+  return null;
+}
+
 async function hasMdResults(projectId: string): Promise<boolean> {
   for (const base of [PROJECTS_DIR_VOLUME, PROJECTS_DIR_REPO]) {
     try {
@@ -151,9 +165,11 @@ export async function listProjects(): Promise<Array<{ projectId: string; meta: R
         // No upload meta — synthesize a stub from the project dir name if there are .md files
         const hasRepo = await hasMdResults(projectId);
         if (hasRepo) {
+          // Seeded demos have no upload date : leave it empty rather than
+          // showing the 1970 epoch, and take the title from _meta.md.
           meta = {
-            originalFilename: projectId,
-            uploadedAt: new Date(0).toISOString(),
+            originalFilename: (await readMetaTitle(projectId)) ?? projectId,
+            uploadedAt: "",
           };
         }
       }

@@ -136,7 +136,12 @@ export default async function ProjectPage({
             results.map((r) => (
               <section key={r.module} id={r.module} className="tsw-section">
                 <div className="tsw-section-label">{labelFor(r.module)}</div>
-                <MdContent>{r.markdown}</MdContent>
+                <MdContent>
+                  {/* The hero already shows _meta's title : drop the duplicate H1. */}
+                  {r.module === "_meta"
+                    ? r.markdown.replace(/^#\s+.+\n+/, "")
+                    : r.markdown}
+                </MdContent>
               </section>
             ))
           )}

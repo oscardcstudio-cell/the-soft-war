@@ -71,3 +71,10 @@ Mémoire vivante du projet. Lue en premier, mise à jour en fin de chaque sessio
 **Phase 3 (P3) — Pipeline modulaire (10 modules)** : à venir
 **Phase 4 (P4) — Dashboard `/p/[slug]`** : à venir
 **Phase 5 (P5) — Polish** : à venir
+
+### 2026-10-15 — Bible démo Parasite (consigne changée par Oscar)
+
+- Oscar abandonne le domaine public : film connu et récent. Nosferatu reste sur la branche locale `demo/nosferatu`, non utilisé.
+- Projet `projects/jzM3WbGyTz/` = Parasite (Bong Joon Ho, 2019), 8 modules, ancres S{n} = scène. Source : scénario anglais FYC Neon, décrit dans `sources/parasite-2019/SOURCE.md`. Le PDF reste dans `uploads/` (gitignoré) : texte protégé, repo public.
+- Citations limitées à 8 répliques d'une ligne (droit de courte citation). Mise en ligne publique = décision d'Oscar (œuvre protégée).
+- Gate : branche locale `demo/parasite` NON poussée.
