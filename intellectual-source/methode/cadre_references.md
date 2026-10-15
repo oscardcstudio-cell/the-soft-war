@@ -1,6 +1,6 @@
 # Cadre — inventaire des références
 
-> Outil du pipeline ([`pipeline_corpus.md`](pipeline_corpus.md)), entre **REVIEW** et **REFACTOR** :
+> Outil de travail, entre la relecture et la correction :
 > un corpus exigeant tient ou tombe sur son **appareil de références**. Ce cadre inventorie, pour
 > chaque référence (texte théorique, œuvre, citation, attribution), **ce qui manque et l'action**.
 > Décline sur tout domaine : une thèse cite des auteurs/concepts, un film cite des œuvres/influences.

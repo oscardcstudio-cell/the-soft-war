@@ -1,0 +1,1016 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Parasite · bible de développement · The Soft War</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Archivo+Black&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- direction · Mecene Swiss Dark, coupe d'architecte · macrostructure : document long en strates · genre : bible de film -->
+<style>
+  /* Tokens copiés de subvention_match/client/src/index.css (bloc --mc-*, thème sombre). */
+  :root {
+    --mc-bg: #0A0A0A;
+    --mc-panel: #141416;
+    --mc-panel-2: #1A1A1D;
+    --mc-border: #26262A;
+    --mc-text: #F5F5F6;
+    --mc-muted: #9999A2;
+    --mc-muted-2: #909099;
+    --mc-primary: #06D6A0;
+    --mc-primary-soft: rgba(6,214,160,.10);
+
+    --gutter: 16px;
+    --bar-h: 52px;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --font-display: 'Archivo Black', 'Archivo', sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --font-ko: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: calc(var(--bar-h) + 16px); }
+  body {
+    margin: 0;
+    background: var(--mc-bg);
+    color: var(--mc-text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.55;
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, p, ul, ol, dl, dd, figure, blockquote { margin: 0; padding: 0; }
+  ul, ol { list-style: none; }
+  em { font-style: italic; }
+
+  .display { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.035em; }
+  .mono {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .sc { /* ancre de scène */
+    font-family: var(--font-mono);
+    font-size: .78em;
+    letter-spacing: .02em;
+    color: var(--mc-muted-2);
+    white-space: nowrap;
+  }
+  .muted { color: var(--mc-muted); }
+  .tone { font-style: italic; color: var(--mc-muted); }
+  .pivot { display: flex; gap: 8px; align-items: baseline; }
+  .pivot svg, .legend svg { flex: none; color: var(--mc-primary); transform: translateY(1px); }
+
+  .page { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter); }
+
+  /* ---------- Barre ---------- */
+  .bar {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--mc-bg);
+    border-bottom: 1px solid var(--mc-border);
+  }
+  .bar .page { display: flex; align-items: center; gap: 20px; height: var(--bar-h); }
+  .brand { font-weight: 700; font-size: 18px; letter-spacing: -0.01em; line-height: 1; flex: none; }
+  .brand b { color: var(--mc-primary); font-weight: 700; }
+  .nav {
+    display: flex; gap: 4px;
+    overflow-x: auto; scrollbar-width: none;
+    margin-right: calc(var(--gutter) * -1);
+    padding-right: var(--gutter);
+    min-width: 0;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a {
+    flex: none;
+    display: inline-flex; align-items: center;
+    min-height: 36px; padding: 0 10px;
+    color: var(--mc-muted); text-decoration: none;
+    border-radius: 4px;
+    transition: color 160ms ease, background-color 160ms ease, transform 120ms var(--ease-out);
+  }
+  .nav a:hover { color: var(--mc-text); }
+  .nav a:active { transform: scale(0.97); }
+  .nav a[aria-current="true"] { color: var(--mc-primary); background: var(--mc-primary-soft); }
+  .nav a:focus-visible { outline: 2px solid var(--mc-primary); outline-offset: 2px; }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 40px 0 64px; }
+  .kicker { color: var(--mc-muted); }
+  h1.display {
+    margin-top: 20px;
+    font-size: clamp(56px, 17vw, 208px);
+    line-height: .86;
+  }
+  .ko { margin-top: 14px; font-size: 15px; color: var(--mc-muted); }
+  .ko span[lang="ko"] { font-family: var(--font-ko); color: var(--mc-text); margin-right: 10px; }
+  .hero-grid { margin-top: 40px; display: grid; gap: 40px; }
+  .logline p { font-size: 19px; line-height: 1.5; max-width: 34em; }
+  .logline .hook {
+    margin-top: 24px;
+    font-family: var(--font-display); letter-spacing: -0.03em;
+    font-size: clamp(26px, 4.4vw, 44px); line-height: 1.02;
+    max-width: 16em; text-wrap: balance;
+  }
+  .credits { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 10px 20px; align-content: start; }
+  .credits dt { padding-top: 3px; color: var(--mc-muted-2); }
+  .credits dd { font-size: 15px; }
+  .howto {
+    margin-top: 28px; padding: 18px 20px;
+    background: var(--mc-panel); border: 1px solid var(--mc-border); border-radius: 8px;
+    font-size: 14px; color: var(--mc-muted);
+  }
+  .howto .mono { display: block; color: var(--mc-text); margin-bottom: 10px; }
+  .legend { display: grid; gap: 8px; }
+  .legend li { display: flex; gap: 10px; align-items: baseline; }
+  .legend .k { flex: none; min-width: 34px; color: var(--mc-text); }
+
+  /* ---------- Sections ---------- */
+  section.part { padding: 72px 0; border-top: 1px solid var(--mc-border); }
+  .head { display: grid; gap: 12px; margin-bottom: 36px; }
+  .head .n { color: var(--mc-primary); }
+  .head h2 { font-size: clamp(36px, 7vw, 64px); line-height: .95; text-wrap: balance; }
+  .lead { font-size: 18px; line-height: 1.5; max-width: 38em; text-wrap: pretty; }
+  .lead + .lead { margin-top: 12px; }
+  .lead strong { font-weight: 600; }
+  h3 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; }
+  h4 { font-size: 17px; font-weight: 700; letter-spacing: -0.005em; line-height: 1.3; }
+  .card { background: var(--mc-panel); border: 1px solid var(--mc-border); border-radius: 8px; padding: 20px; }
+
+  /* Réplique : seule citation du film admise, toujours dans ce composant */
+  .line { border-left: 2px solid var(--mc-primary); padding: 2px 0 2px 16px; margin: 18px 0; }
+  .line figcaption { color: var(--mc-muted); }
+  .line blockquote {
+    margin-top: 6px;
+    font-family: var(--font-display); letter-spacing: -0.02em;
+    font-size: clamp(20px, 2.4vw, 26px); line-height: 1.12;
+  }
+  .line .gloss { margin-top: 8px; font-size: 14px; color: var(--mc-muted); }
+
+  /* ---------- 01 · La coupe ---------- */
+  .stairs { margin-top: 20px; display: grid; gap: 8px; max-width: 38em; }
+  .stairs li { display: flex; gap: 12px; align-items: baseline; font-size: 16px; }
+  .stairs svg { flex: none; color: var(--mc-primary); transform: translateY(2px); }
+  .section-cut { margin-top: 44px; border: 1px solid var(--mc-border); border-radius: 8px; overflow: hidden; }
+  .stratum { padding: 24px 20px 28px; display: grid; gap: 24px; }
+  .stratum + .stratum { border-top: 1px solid var(--mc-border); }
+  .stratum.s1 { background: var(--mc-panel-2); }
+  .stratum.s2 { background: var(--mc-panel); }
+  .stratum.s3 { background: var(--mc-bg); }
+  .s-label .depth { color: var(--mc-primary); }
+  .s-label h3 { margin-top: 8px; font-family: var(--font-display); font-weight: 400; letter-spacing: -0.03em; font-size: 30px; line-height: 1; }
+  .s-label .who { margin-top: 6px; color: var(--mc-muted); font-size: 15px; }
+  .s-notes { margin-top: 16px; display: grid; gap: 10px; font-size: 14px; }
+  .s-notes li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; }
+  .s-notes svg { color: var(--mc-muted); margin-top: 2px; }
+  .places { display: grid; gap: 0 28px; grid-template-columns: minmax(0, 1fr); }
+  .place { padding: 16px 0 18px; border-top: 1px solid var(--mc-border); display: grid; gap: 6px; align-content: start; }
+  .place .num { color: var(--mc-muted-2); }
+  .place p { font-size: 15px; }
+
+  /* ---------- 02 · Le monde ---------- */
+  .org { margin-top: 8px; }
+  .org-row { display: grid; gap: 6px; padding: 16px 0; border-top: 1px solid var(--mc-border); }
+  .org-row:first-child { border-top: 0; padding-top: 0; }
+  .org-head { display: none; }
+  .post { color: var(--mc-muted); }
+  .swap { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 17px; }
+  .swap s { color: var(--mc-muted-2); text-decoration-thickness: 1px; }
+  .swap .none { color: var(--mc-muted-2); font-style: italic; }
+  .swap b { font-weight: 700; }
+  .swap svg { color: var(--mc-primary); transform: translateY(2px); }
+  .how { font-size: 15px; color: var(--mc-muted); }
+  .org-foot { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--mc-border); font-size: 17px; font-weight: 600; max-width: 34em; }
+
+  .rules { margin-top: 20px; display: grid; gap: 16px; }
+  .rules .card h3 { margin-bottom: 10px; }
+  .rules .card > p + p { margin-top: 10px; }
+  .rules p, .rules li { font-size: 15px; }
+  .ticks { display: grid; gap: 10px; margin-top: 12px; }
+  .ticks li { padding-left: 16px; position: relative; }
+  .ticks li::before { content: ""; position: absolute; left: 0; top: .62em; width: 6px; height: 1px; background: var(--mc-muted-2); }
+  .paradox { display: grid; gap: 20px; }
+  .paradox > li { padding-top: 14px; border-top: 1px solid var(--mc-border); }
+  .paradox .line { margin: 0 0 8px; }
+
+  /* ---------- 03 · Personnages ---------- */
+  .family + .family { margin-top: 48px; }
+  .fam-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
+  .fam-head h3 { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.03em; font-size: 28px; }
+  .tag { display: inline-flex; align-items: center; gap: 8px; color: var(--mc-muted); }
+  .lvl { display: inline-grid; gap: 2px; width: 14px; }
+  .lvl i { display: block; height: 3px; border-radius: 1px; background: var(--mc-border); }
+  .lvl.l1 i:nth-child(1), .lvl.l2 i:nth-child(2), .lvl.l3 i:nth-child(3) { background: var(--mc-primary); }
+  .people { display: grid; gap: 12px; }
+  .person { display: grid; gap: 8px; align-content: start; }
+  .p-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+  .p-top h4 { font-size: 20px; }
+  .p-top .age { color: var(--mc-muted); font-family: var(--font-mono); font-size: 14px; }
+  .p-top .alias { color: var(--mc-primary); }
+  .actor { color: var(--mc-muted-2); font-family: var(--font-mono); font-size: 12.5px; }
+  .role { font-weight: 600; font-size: 15px; }
+  .person p { font-size: 15px; }
+  .person .line { margin: 6px 0 2px; }
+  .arc { margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--mc-border); font-size: 13.5px; line-height: 1.6; color: var(--mc-muted); }
+  .arc i { font-style: normal; color: var(--mc-primary); padding: 0 2px; }
+  .person .line blockquote { font-size: 19px; }
+  .minor { margin-top: 48px; display: grid; gap: 0 28px; }
+  .minor li { padding: 12px 0; border-top: 1px solid var(--mc-border); font-size: 15px; }
+  .minor b { font-weight: 600; }
+  .geo { margin-top: 48px; display: grid; gap: 16px; }
+  .geo h4 { margin-bottom: 6px; }
+  .geo p { font-size: 15px; }
+
+  /* ---------- 04 · Teaser ---------- */
+  .sheet { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+  .frame { display: grid; gap: 10px; align-content: start; }
+  .frame-top { display: flex; align-items: baseline; gap: 12px; }
+  .frame .letter { font-family: var(--font-display); font-size: 34px; line-height: .9; color: var(--mc-muted-2); }
+  .frame h3 { font-size: 18px; }
+  .shots { display: grid; gap: 8px; font-size: 15px; }
+  .shots li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; align-items: baseline; }
+  .pick {
+    display: inline-grid; place-items: center;
+    width: 20px; height: 20px; border-radius: 4px;
+    background: var(--mc-primary); color: var(--mc-bg);
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+  }
+  .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--mc-muted-2); margin: 0 auto; transform: translateY(-2px); }
+  .frame .tone { font-size: 14px; padding-top: 8px; border-top: 1px solid var(--mc-border); }
+
+  /* ---------- 05 · Ton ---------- */
+  .duo { display: grid; gap: 16px; }
+  .duo .line { margin: 0; padding: 4px 0 4px 20px; }
+  .duo .line blockquote { font-size: clamp(28px, 4.6vw, 48px); line-height: 1; }
+  .tone-notes { margin-top: 40px; display: grid; gap: 0 28px; }
+  .tone-notes li { padding: 16px 0; border-top: 1px solid var(--mc-border); }
+  .tone-notes h3 { font-size: 17px; margin-bottom: 6px; }
+  .tone-notes p { font-size: 15px; }
+
+  /* ---------- 06 · Fins ---------- */
+  .verdict { font-family: var(--font-display); letter-spacing: -0.03em; font-size: clamp(26px, 4vw, 40px); line-height: 1.04; max-width: 20em; text-wrap: balance; }
+  .main-ends { display: grid; gap: 12px; }
+  .end { display: grid; gap: 12px; align-content: start; }
+  .end-top { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .end-top .L { font-family: var(--font-display); font-size: 40px; line-height: .85; color: var(--mc-primary); }
+  .end-top .state { color: var(--mc-muted); }
+  .end p, .end li { font-size: 15px; }
+  .end .steps { display: grid; gap: 6px; }
+  .meaning { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; padding-top: 12px; border-top: 1px solid var(--mc-border); font-weight: 600; font-size: 15px; }
+  .meaning svg { color: var(--mc-primary); margin-top: 3px; }
+  .aborted-label { margin: 40px 0 4px; color: var(--mc-muted); }
+  .aborted .end { padding: 20px 0; border-top: 1px solid var(--mc-border); }
+  .aborted .end-top .L { color: var(--mc-muted-2); font-size: 32px; }
+
+  /* ---------- 07 · Non-dits ---------- */
+  .open li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 8px; padding: 18px 0; border-top: 1px solid var(--mc-border); font-size: 19px; line-height: 1.4; }
+  .open li:last-child { border-bottom: 1px solid var(--mc-border); }
+  .open .q { color: var(--mc-primary); font-family: var(--font-mono); font-size: 14px; padding-top: 4px; }
+
+  /* ---------- 08 · Références ---------- */
+  .refs { display: grid; gap: 40px; }
+  .refs h3 { color: var(--mc-muted); font-family: var(--font-mono); font-weight: 500; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px; }
+  .refs li { padding: 12px 0; border-top: 1px solid var(--mc-border); font-size: 15px; }
+  .refs li b { font-weight: 600; }
+  .crew li { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; }
+  .crew .r { color: var(--mc-muted-2); font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; padding-top: 3px; }
+
+  footer { padding: 32px 0 120px; border-top: 1px solid var(--mc-border); font-size: 14px; color: var(--mc-muted); }
+  footer a { color: var(--mc-primary); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  footer a:hover { text-decoration-thickness: 2px; }
+  footer a:focus-visible { outline: 2px solid var(--mc-primary); outline-offset: 3px; border-radius: 2px; }
+
+  /* ---------- Apparition (une seule fois, au premier passage) ---------- */
+  .js [data-reveal] { opacity: 0; transform: translateY(10px); transition: opacity 320ms var(--ease-out), transform 320ms var(--ease-out); transition-delay: var(--d, 0ms); }
+  .js [data-reveal].in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .js [data-reveal] { opacity: 1; transform: none; transition: none; }
+    .nav a { transition: none; }
+  }
+
+  /* ---------- Tablette ---------- */
+  @media (min-width: 640px) {
+    .places { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .people { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .sheet { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .minor { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .geo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tone-notes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .main-ends { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .duo { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+  }
+
+  /* ---------- Desktop ---------- */
+  @media (min-width: 960px) {
+    :root { --gutter: 40px; --bar-h: 60px; }
+    .nav { margin-left: auto; margin-right: 0; padding-right: 0; }
+    .hero { padding: 56px 0 96px; }
+    .hero-grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); column-gap: 80px; margin-top: 56px; }
+    .logline p { font-size: 21px; }
+    section.part { padding: 112px 0; }
+    .head { grid-template-columns: 64px minmax(0, 1fr); column-gap: 24px; margin-bottom: 48px; }
+    .head .n { padding-top: 14px; }
+    .head > :not(.n) { grid-column: 2; }
+    .stratum { grid-template-columns: 280px minmax(0, 1fr); gap: 40px; padding: 32px 32px 36px; }
+    .places { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .s2 .places { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .s3 .places { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .org-head, .org-row { grid-template-columns: 170px minmax(0, 1.2fr) minmax(0, 1.3fr); column-gap: 28px; align-items: baseline; }
+    .org-head { display: grid; padding-bottom: 10px; color: var(--mc-muted-2); }
+    .org-row:first-of-type { border-top: 1px solid var(--mc-border); padding-top: 16px; }
+    .rules { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+    .rules .w7 { grid-column: span 7; }
+    .rules .w5 { grid-column: span 5; }
+    .rules .w12 { grid-column: span 12; }
+    .paradox { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+
+    .people { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .bunker .people { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 50%; }
+    .minor { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .geo { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .sheet { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .frame.last { grid-column: 1 / -1; }
+    .frame.last .shots { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 28px; }
+    .tone-notes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .aborted { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 28px; }
+    .open { max-width: 52em; }
+    .refs { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 64px; row-gap: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-pivot" viewBox="0 0 12 12"><path d="M6 1l5 5-5 5-5-5z" fill="currentColor"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 16 16"><path d="M3 8h9M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-up" viewBox="0 0 16 16"><path d="M8 13V3M4.5 6.5L8 3l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-down" viewBox="0 0 16 16"><path d="M8 3v10M4.5 9.5L8 13l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-window" viewBox="0 0 16 16"><rect x="2.5" y="3" width="11" height="10" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 3v10M2.5 8h11" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="i-rain" viewBox="0 0 16 16"><path d="M4 2.5l-1.5 4M8.5 2.5L7 6.5M13 2.5l-1.5 4M6 9l-1.5 4M10.5 9L9 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-door" viewBox="0 0 16 16"><rect x="3.5" y="2" width="9" height="12" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="10" cy="8.5" r=".9" fill="currentColor"/></symbol>
+</svg>
+
+<header class="bar">
+  <div class="page">
+    <span class="brand" aria-label="Mecene">Mecene<b>.</b></span>
+    <nav class="nav" aria-label="Sections">
+      <a class="mono" href="#coupe">La coupe</a>
+      <a class="mono" href="#monde">Le monde</a>
+      <a class="mono" href="#personnages">Personnages</a>
+      <a class="mono" href="#teaser">Teaser</a>
+      <a class="mono" href="#ton">Le ton</a>
+      <a class="mono" href="#fins">Les fins</a>
+      <a class="mono" href="#non-dits">Non-dits</a>
+      <a class="mono" href="#references">Références</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" aria-labelledby="titre">
+    <p class="mono kicker">The Soft War · bible de développement</p>
+    <h1 class="display" id="titre">Parasite</h1>
+    <p class="ko"><span lang="ko">기생충</span><em>Gisaengchung</em></p>
+
+    <div class="hero-grid">
+      <div class="logline">
+        <p>Une famille au chômage, entassée dans un demi-sous-sol de Séoul, s'infiltre un par un au service d'une famille riche&nbsp;: professeur d'anglais, art-thérapeute, chauffeur, gouvernante. Le plan est parfait jusqu'au soir d'orage où l'ancienne gouvernante sonne à la porte.</p>
+        <p class="hook">Sous la cave de la maison, il y a une autre cave.</p>
+      </div>
+
+      <div>
+        <dl class="credits">
+          <dt class="mono">Réalisation</dt><dd>Bong Joon Ho</dd>
+          <dt class="mono">Scénario</dt><dd>Bong Joon Ho et Han Jin Won, d'après une histoire de Bong Joon Ho</dd>
+          <dt class="mono">Pays</dt><dd>Corée du Sud</dd>
+          <dt class="mono">Sortie</dt><dd>2019</dd>
+          <dt class="mono">Genre</dt><dd>Thriller social, comédie noire</dd>
+        </dl>
+
+        <div class="howto">
+          <span class="mono">Lire cette bible</span>
+          <p>Source&nbsp;: le scénario anglais diffusé pour la campagne des Oscars, 159 scènes. Les noms suivent son orthographe.</p>
+          <ul class="legend" style="margin-top:12px">
+            <li><span class="k sc">S14</span><span>numéro de scène du scénario</span></li>
+            <li><span class="k"><em>italique</em></span><span>tonalité d'un lieu ou d'une image</span></li>
+            <li><span class="k"><svg width="10" height="10"><use href="#i-pivot"/></svg></span><span>pivot dramatique</span></li>
+            <li><span class="k" style="border-left:2px solid var(--mc-primary);height:14px;min-width:0;margin-right:32px"></span><span>réplique du scénario, citée en anglais à fin d'analyse (droit de courte citation)</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 01 · LA COUPE ================= -->
+  <section class="part" id="coupe" aria-labelledby="h-coupe">
+    <div class="head">
+      <span class="n mono">01</span>
+      <h2 class="display" id="h-coupe">La coupe</h2>
+      <p class="lead">Le monde, c'est <strong>Séoul aujourd'hui, organisé en altitude</strong>. Plus on est riche, plus on vit haut&nbsp;; plus on est pauvre, plus on vit bas. Le film n'a pas de surnaturel&nbsp;: sa seule loi est verticale.</p>
+      <ul class="stairs">
+        <li><svg width="16" height="16"><use href="#i-up"/></svg><span>Pour avoir du Wi-Fi, il faut monter <span class="sc">S2</span></span></li>
+        <li><svg width="16" height="16"><use href="#i-down"/></svg><span>Pour fuir, il faut descendre <span class="sc">S100-S101</span></span></li>
+        <li><svg width="16" height="16"><use href="#i-arrow"/></svg><span>L'escalier est le motif central&nbsp;: chaque montée est une conquête, chaque descente une chute.</span></li>
+      </ul>
+    </div>
+
+    <div class="section-cut">
+      <!-- Strate 1 -->
+      <div class="stratum s1" data-reveal>
+        <div class="s-label">
+          <span class="mono depth">Niveau haut</span>
+          <h3>La colline</h3>
+          <p class="who">Les Park, les riches</p>
+          <ul class="s-notes">
+            <li><svg width="16" height="16"><use href="#i-window"/></svg><span>La fenêtre donne sur un jardin.</span></li>
+            <li><svg width="16" height="16"><use href="#i-rain"/></svg><span>L'orage est un spectacle, vu à travers une baie vitrée avec un whisky <span class="sc">S70</span>. Le lendemain, l'air est pur&nbsp;: la pluie a tout lavé <span class="sc">S122</span></span></li>
+          </ul>
+        </div>
+        <ol class="places">
+          <li class="place">
+            <span class="num mono">Lieu 03</span>
+            <h4>La route de la colline</h4>
+            <p>Rue en pente, hauts murs, aucun piéton&nbsp;; au bout, un portail en haut d'un escalier <span class="sc">S9-S10</span>. On la monte au début, on la dévale sous la pluie <span class="sc">S99</span></p>
+            <p class="pivot"><svg width="10" height="10"><use href="#i-pivot"/></svg><span>Axe vertical du film en plein air</span></p>
+          </li>
+          <li class="place">
+            <span class="num mono">Lieu 04</span>
+            <h4>La maison des Park, rez-de-chaussée</h4>
+            <p>Jardin parfait, arbres majestueux, baie vitrée sur la pelouse <span class="sc">S10-S11</span>. Cuisine et salle à manger, table en bois, dessins de Da-Song au mur.</p>
+            <p class="tone">Lumière, silence, bon goût sans excès</p>
+            <p class="pivot"><svg width="10" height="10"><use href="#i-pivot"/></svg><span>Le salon où les Kim jouent à être chez eux <span class="sc">S70</span></span></p>
+          </li>
+          <li class="place">
+            <span class="num mono">Lieu 05</span>
+            <h4>L'escalier et l'étage</h4>
+            <p>Grand escalier oppressant <span class="sc">S13</span>, couloir des chambres. Chambre de Da-Hae (cours, baisers, sous le lit), chambre-tipi de Da-Song. Sauna de poche, où se scellent les accords secrets <span class="sc">S54</span></p>
+          </li>
+          <li class="place">
+            <span class="num mono">Lieu 08</span>
+            <h4>Le dessous de la table basse</h4>
+            <p>Trois Kim cachés sous la table pendant que les Park parlent de leur odeur <span class="sc">S94</span></p>
+            <p class="tone">Humiliation à hauteur de parquet</p>
+          </li>
+          <li class="place">
+            <span class="num mono">Lieu 11</span>
+            <h4>Le jardin de la fête</h4>
+            <p>Tables en arc de cercle autour du tipi, barbecue, invités élégants <span class="sc">S121-S123</span></p>
+            <p class="pivot"><svg width="10" height="10"><use href="#i-pivot"/></svg><span>Le massacre en plein soleil <span class="sc">S132</span></span></p>
+          </li>
+          <li class="place">
+            <span class="num mono">Lieu 12</span>
+            <h4>La colline d'en face, l'hiver</h4>
+            <p>Ki-Woo et son télescope, la maison au loin <span class="sc">S140, S159</span></p>
+            <p class="tone">Froid, distance, attente</p>
+          </li>
+        </ol>
+      </div>
+
+      <!-- Strate 2 -->
+      <div class="stratum s2" data-reveal style="--d:60ms">
+        <div class="s-label">
+          <span class="mono depth">Niveau bas</span>
+          <h3>Le demi-sous-sol</h3>
+          <p class="who">Les Kim, les pauvres</p>
+          <ul class="s-notes">
+            <li><svg width="16" height="16"><use href="#i-window"/></svg><span>La fenêtre, au ras de la rue, donne sur des jambes et de l'urine&nbsp;: ivrognes, fumigation, passants <span class="sc">S3, S5</span></span></li>
+            <li><svg width="16" height="16"><use href="#i-rain"/></svg><span>La même pluie remonte par les toilettes et noie l'appartement jusqu'au menton <span class="sc">S102-S107</span></span></li>
+          </ul>
+        </div>
+        <ol class="places">
+          <li class="place">
+            <span class="num mono">Lieu 01</span>
+            <h4>Le demi-sous-sol des Kim</h4>
+            <p>Toilettes surélevées comme un autel, parce que le sol est plus bas que la fosse septique&nbsp;: le seul point où capte le Wi-Fi <span class="sc">S2</span></p>
+            <p class="tone">Promiscuité comique, misère sans plainte</p>
+          </li>
+          <li class="place">
+            <span class="num mono">Lieu 02</span>
+            <h4>Pizza Time, le cybercafé, le buffet des chauffeurs</h4>
+            <p>Les lieux de la débrouille&nbsp;: boîtes pliées, diplôme forgé, plans chuchotés <span class="sc">S4, S7, S24, S33</span></p>
+            <p class="tone">Néons, plastique, conspiration de cantine</p>
+          </li>
+          <li class="place">
+            <span class="num mono">Lieu 09</span>
+            <h4>Les escaliers de la ville sous l'orage</h4>
+            <p>Marches, tunnels, passage sous un pont, ruelles inondées&nbsp;: sous l'averse, les Kim redescendent toute la ville à pied <span class="sc">S100-S102</span></p>
+            <p class="pivot"><svg width="10" height="10"><use href="#i-pivot"/></svg><span>La descente la plus longue du film</span></p>
+          </li>
+          <li class="place">
+            <span class="num mono">Lieu 10</span>
+            <h4>Le gymnase des sinistrés</h4>
+            <p>Rangées de matelas, vêtements donnés en tas <span class="sc">S110, S116</span></p>
+            <p class="tone">Promiscuité collective, l'aube après la catastrophe</p>
+          </li>
+        </ol>
+      </div>
+
+      <!-- Strate 3 -->
+      <div class="stratum s3" data-reveal style="--d:120ms">
+        <div class="s-label">
+          <span class="mono depth">Sous le niveau bas</span>
+          <h3>Le bunker</h3>
+          <p class="who">Kun-Sae, plus pauvre que les pauvres</p>
+          <ul class="s-notes">
+            <li><svg width="16" height="16"><use href="#i-door"/></svg><span>Il vit sous la maison des riches, dans un bunker que même les propriétaires ignorent <span class="sc">S74-S75</span></span></li>
+          </ul>
+        </div>
+        <ol class="places">
+          <li class="place">
+            <span class="num mono">Lieu 06</span>
+            <h4>La cave de stockage</h4>
+            <p>Bocaux de jus de prune, fournitures, tables pliantes <span class="sc">S22</span>. Derrière le meuble à bocaux, une porte d'acier <span class="sc">S74</span></p>
+          </li>
+          <li class="place">
+            <span class="num mono">Lieu 07</span>
+            <h4>Le bunker</h4>
+            <p>Plafond bas, murs gris, couchette, toilettes, petit frigo, vieille télé <span class="sc">S75</span>. Murs couverts de photos de Namgoong et de Dong-Ik <span class="sc">S91</span>. Interrupteurs reliés aux lumières de l'entrée&nbsp;: le morse <span class="sc">S87-S89</span></p>
+            <p class="tone">Tombeau habité</p>
+            <p class="pivot"><svg width="10" height="10"><use href="#i-pivot"/></svg><span>Héberge successivement Kun-Sae puis Ki-Tek <span class="sc">S142-S151</span></span></p>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 02 · LE MONDE ================= -->
+  <section class="part" id="monde" aria-labelledby="h-monde">
+    <div class="head">
+      <span class="n mono">02</span>
+      <h2 class="display" id="h-monde">Le monde</h2>
+      <p class="lead">Le film est un organigramme de la domesticité.</p>
+    </div>
+
+    <div class="card org" data-reveal>
+      <div class="org-head mono"><span>Poste</span><span>Avant, puis après</span><span>Méthode</span></div>
+      <div class="org-row">
+        <span class="post mono">Professeur d'anglais</span>
+        <span class="swap"><s>Min-Hyuk</s><span class="muted" style="font-size:14px">étudiant</span><svg width="16" height="16"><use href="#i-arrow"/></svg><b>Ki-Woo</b></span>
+        <span class="how">Recommandation et faux diplôme <span class="sc">S6-S8</span></span>
+      </div>
+      <div class="org-row">
+        <span class="post mono">Art-thérapeute</span>
+        <span class="swap"><span class="none">poste créé</span><svg width="16" height="16"><use href="#i-arrow"/></svg><b>Ki-Jung</b></span>
+        <span class="how">Fausse biographie, improvisation <span class="sc">S16-S22</span></span>
+      </div>
+      <div class="org-row">
+        <span class="post mono">Chauffeur</span>
+        <span class="swap"><s>Yun</s><span class="muted" style="font-size:14px">31 ans</span><svg width="16" height="16"><use href="#i-arrow"/></svg><b>Ki-Tek</b></span>
+        <span class="how">Culotte oubliée dans la voiture <span class="sc">S23-S26</span></span>
+      </div>
+      <div class="org-row">
+        <span class="post mono">Gouvernante</span>
+        <span class="swap"><s>Mun-Kwang</s><svg width="16" height="16"><use href="#i-arrow"/></svg><b>Chung-Sook</b></span>
+        <span class="how">Allergie aux pêches et fausse tuberculose <span class="sc">S35-S52</span></span>
+      </div>
+      <p class="org-foot">Chaque Kim remplace un pauvre. Les riches ne perdent rien&nbsp;; seuls les pauvres sont éjectés.</p>
+    </div>
+
+    <div class="rules">
+      <article class="card w7" data-reveal>
+        <h3>La ligne, et l'odeur qui la franchit</h3>
+        <p>Dong-Ik répète un mot&nbsp;: la ligne. Il aime les employés qui ne la franchissent jamais <span class="sc">S57</span>. Ki-Tek finira par lui dire, mi-sérieux, qu'il l'a dépassée <span class="sc">S125</span>. Une frontière invisible, que les riches surveillent et que les pauvres n'ont pas le droit de toucher.</p>
+        <p>L'odeur est le seul marqueur de classe qu'aucune ruse ne peut effacer.</p>
+        <ul class="ticks">
+          <li>Da-Song repère que la gouvernante, le chauffeur et l'art-thérapeute sentent pareil <span class="sc">S61</span></li>
+          <li>Ce n'est pas la lessive. Elle ne partira que s'ils partent&nbsp;:
+            <figure class="line"><figcaption class="mono">Ki-Jung · <span class="sc">S62</span></figcaption><blockquote lang="en">It's the basement smell.</blockquote></figure>
+          </li>
+          <li>Dong-Ik la décrit&nbsp;: radis mariné, serpillière, métro. Ceux qu'il décrit l'entendent, cachés sous la table&nbsp;:
+            <figure class="line"><figcaption class="mono">Dong-Ik · <span class="sc">S94</span></figcaption><blockquote lang="en">But that smell. It definitely crosses the line.</blockquote></figure>
+          </li>
+          <li>C'est un nez qui se pince qui déclenche le coup de hache <span class="sc">S132</span></li>
+        </ul>
+      </article>
+
+      <article class="card w5" data-reveal style="--d:60ms">
+        <h3>La Belt of Trust</h3>
+        <figure class="line"><figcaption class="mono">Yon-Kyo · <span class="sc">S27</span></figcaption><blockquote lang="en">Belt of Trust.</blockquote></figure>
+        <p>Chez les riches, on n'embauche pas sur CV mais sur recommandation. C'est la faille que les Kim exploitent&nbsp;: le réseau de confiance devient leur porte d'entrée, et leur arme.</p>
+      </article>
+
+      <article class="card w5" data-reveal>
+        <h3>L'économie du faux</h3>
+        <figure class="line"><figcaption class="mono">Ki-Woo, premier cours · <span class="sc">S14</span></figcaption><blockquote lang="en">I'm not here to help you learn. I'm here to help you score.</blockquote></figure>
+        <p>Les Kim sont compétents. Ki-Jung forge un certificat en quelques clics <span class="sc">S7</span>, Ki-Woo enseigne vraiment bien, Ki-Tek conduit à la perfection <span class="sc">S30</span>. Une question reste sans réponse&nbsp;: si le talent existe, pourquoi faut-il mentir pour l'employer&nbsp;?</p>
+      </article>
+
+      <article class="card w7" data-reveal style="--d:60ms">
+        <h3>La maison d'architecte</h3>
+        <p>Construite par un architecte célèbre, Namgoong Hyunja, puis vendue avec son secret&nbsp;: un bunker antiatomique dont il n'a jamais parlé <span class="sc">S75</span>.</p>
+        <p>La maison est un personnage. Elle a sa gouvernante attitrée, qui a survécu à un changement de propriétaire <span class="sc">S32-S33</span>, son fantôme, son code morse. Elle change de famille trois fois (Namgoong, Park, une famille allemande) et garde toujours quelqu'un dans sa cave.</p>
+      </article>
+
+      <article class="card w12" data-reveal>
+        <h3>Paradoxes</h3>
+        <ul class="paradox">
+          <li>Les escrocs sont plus sympathiques que leurs victimes, et leurs victimes ne sont pas méchantes.</li>
+          <li>
+            <figure class="line"><figcaption class="mono">Chung-Sook corrige son mari · <span class="sc">S70</span></figcaption><blockquote lang="en">She's kindhearted because she's rich.</blockquote></figure>
+            La bonté des riches est un luxe.
+          </li>
+          <li>Le fantôme de la maison est un homme réel, et le seul à remercier sincèrement M.&nbsp;Park <span class="sc">S89</span></li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= 03 · PERSONNAGES ================= -->
+  <section class="part" id="personnages" aria-labelledby="h-perso">
+    <div class="head">
+      <span class="n mono">03</span>
+      <h2 class="display" id="h-perso">Personnages</h2>
+      <p class="lead">Âges indiqués par le script. Sous chaque nom, l'interprète.</p>
+    </div>
+
+    <div class="family" data-reveal>
+      <div class="fam-head"><h3>Les Kim</h3><span class="tag mono"><span class="lvl l2" aria-hidden="true"><i></i><i></i><i></i></span>Demi-sous-sol</span></div>
+      <div class="people">
+        <article class="card person">
+          <div class="p-top"><h4>Ki-Tek</h4><span class="age">49</span></div>
+          <span class="actor">Song Kang-ho</span>
+          <p class="role">Le père, devient chauffeur</p>
+          <p>Chômeur serein, enchaîne les faillites (poulet frit, castella taïwanais). Joue mal la comédie, sauf quand il ne joue plus <span class="sc">S70, S82</span></p>
+          <p class="arc">Sourire servile <i>→</i> humiliations répétées <i>→</i> geste <i>→</i> enfermement volontaire</p>
+        </article>
+        <article class="card person">
+          <div class="p-top"><h4>Chung-Sook</h4><span class="age">49</span></div>
+          <span class="actor">Jang Hye-jin</span>
+          <p class="role">La mère, devient gouvernante</p>
+          <p>Ancienne lanceuse de poids en championnat national <span class="sc">S5</span>. Lucide et brutale, la plus physique de la famille.</p>
+          <figure class="line"><figcaption class="mono">Ivre, sur M. Park · <span class="sc">S70</span></figcaption><blockquote lang="en">He would skitter away like a little cockroach.</blockquote><p class="gloss">Le cafard deviendra le sort de Ki-Tek.</p></figure>
+        </article>
+        <article class="card person">
+          <div class="p-top"><h4>Ki-Woo</h4><span class="age">24</span><span class="alias mono">Kevin</span></div>
+          <span class="actor">Choi Woo-shik</span>
+          <p class="role">Le fils</p>
+          <p>Quatre fois recalé au concours d'entrée. Ouvre la porte de la maison. Penseur de plans, croit aux symboles, s'accroche à la pierre. Survit avec des séquelles.</p>
+          <p class="arc">Plan <i>→</i> succès <i>→</i> perte du plan <i>→</i> coma <i>→</i> nouveau plan, impossible</p>
+        </article>
+        <article class="card person">
+          <div class="p-top"><h4>Ki-Jung</h4><span class="age">23</span><span class="alias mono">Jessica</span></div>
+          <span class="actor">Park So-dam</span>
+          <p class="role">La fille</p>
+          <p>Faussaire virtuose, actrice glaciale, la plus douée. La seule à vouloir que la famille pense à elle-même <span class="sc">S70</span></p>
+          <p class="arc">La plus libre, la seule sans arc de rédemption&nbsp;: poignardée en apportant le gâteau, elle meurt en jouant son rôle <span class="sc">S132</span></p>
+        </article>
+      </div>
+    </div>
+
+    <div class="family" data-reveal>
+      <div class="fam-head"><h3>Les Park</h3><span class="tag mono"><span class="lvl l1" aria-hidden="true"><i></i><i></i><i></i></span>Colline</span></div>
+      <div class="people">
+        <article class="card person">
+          <div class="p-top"><h4>Dong-Ik</h4><span class="age">45</span></div>
+          <span class="actor">Lee Sun-kyun</span>
+          <p class="role">Le père, PDG tech</p>
+          <p>Courtois, détendu. Tué à la hache <span class="sc">S132</span></p>
+        </article>
+        <article class="card person">
+          <div class="p-top"><h4>Yon-Kyo</h4><span class="age">41</span></div>
+          <span class="actor">Cho Yeo-jeong</span>
+          <p class="role">La mère</p>
+          <p>Simple, selon Min-Hyuk <span class="sc">S6</span>. Crédule, généreuse. Tout passe par sa confiance.</p>
+        </article>
+        <article class="card person">
+          <div class="p-top"><h4>Da-Hae</h4><span class="age">lycéenne</span></div>
+          <p class="role">La fille</p>
+          <p>Élève de Ki-Woo, puis son amoureuse. Porte Ki-Woo blessé hors du jardin <span class="sc">S132</span></p>
+        </article>
+        <article class="card person">
+          <div class="p-top"><h4>Da-Song</h4><span class="age">10</span></div>
+          <p class="role">Le fils</p>
+          <p>Hyperactif, fasciné par les Indiens d'Amérique et les scouts.</p>
+        </article>
+      </div>
+    </div>
+
+    <div class="family bunker" data-reveal>
+      <div class="fam-head"><h3>Le sous-sol du sous-sol</h3><span class="tag mono"><span class="lvl l3" aria-hidden="true"><i></i><i></i><i></i></span>Bunker</span></div>
+      <div class="people">
+        <article class="card person">
+          <div class="p-top"><h4>Mun-Kwang</h4><span class="age">45</span></div>
+          <span class="actor">Lee Jung-eun</span>
+          <p class="role">L'ancienne gouvernante</p>
+          <p>Cache son mari dans le bunker depuis quatre ans. Imitatrice de speakerine nord-coréenne <span class="sc">S76</span>. Meurt de sa chute dans l'escalier <span class="sc">S86, S106-S108</span></p>
+        </article>
+        <article class="card person">
+          <div class="p-top"><h4>Kun-Sae</h4><span class="age">45</span></div>
+          <span class="actor">Park Myung-hoon</span>
+          <p class="role">Son mari</p>
+          <p>En faillite, poursuivi par des usuriers.</p>
+          <p class="arc">Gratitude envers le maître <i>→</i> rage <i>→</i> sortie au grand jour, mortelle</p>
+        </article>
+      </div>
+    </div>
+
+    <ul class="minor" data-reveal aria-label="Personnages secondaires">
+      <li><b>Min-Hyuk</b>, 24. Ami de Ki-Woo, étudiant, offre la pierre et le poste <span class="sc">S5-S6</span></li>
+      <li><b>La patronne de Pizza Time</b>. Paie les boîtes pliées, premier rapport de force <span class="sc">S4</span></li>
+      <li><b>L'ivrogne</b>. Urine contre la fenêtre du demi-sous-sol, deux fois <span class="sc">S5, S62</span></li>
+      <li><b>Le détective et le médecin</b>. Ne ressemblent pas à leur métier <span class="sc">S133</span></li>
+    </ul>
+
+    <div class="geo" data-reveal>
+      <div><h4>Le miroir</h4><p>Les Kim et le couple du bunker sont la même famille à un étage d'écart&nbsp;: même faillite (le castella <span class="sc">S75</span>), même dépendance aux Park.</p></div>
+      <div><h4>Le père et le patron</h4><p>Ki-Tek et Dong-Ik, deux hommes du même âge, l'un devant l'autre dans la voiture. Le film entier se joue sur leur distance.</p></div>
+      <div><h4>Les deux enfants qui voient</h4><p>Da-Song&nbsp;: l'odeur, le fantôme vu en CP <span class="sc">S90</span>, le morse <span class="sc">S109</span>. Da-Hae&nbsp;: la fausse cousine, dès le premier jour <span class="sc">S20</span>. Les adultes riches ne voient rien.</p></div>
+      <div><h4>Qui vit de qui&nbsp;?</h4><p>Un parasitisme circulaire&nbsp;: les Kim vivent des Park, les Park de leurs employés, Kun-Sae de tous.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 04 · TEASER ================= -->
+  <section class="part" id="teaser" aria-labelledby="h-teaser">
+    <div class="head">
+      <span class="n mono">04</span>
+      <h2 class="display" id="h-teaser">Teaser</h2>
+      <p class="lead">Les images candidates, par bloc thématique. Sept sont retenues pour le teaser, numérotées <span class="pick" aria-hidden="true">1</span> à <span class="pick" aria-hidden="true">7</span>.</p>
+    </div>
+
+    <div class="sheet">
+      <article class="card frame" data-reveal><div class="frame-top"><span class="letter">A</span><h3>Chercher le signal</h3></div>
+        <ul class="shots">
+          <li><span class="pick" title="Shortlist 1">1</span><span>Ki-Woo et Ki-Jung serrés sur les toilettes, téléphones levés vers le plafond <span class="sc">S2</span></span></li>
+          <li><span class="dot"></span><span>Pliage de boîtes à pizza dans le gaz de fumigation <span class="sc">S3</span></span></li>
+        </ul><p class="tone">Comédie de la misère</p></article>
+
+      <article class="card frame" data-reveal style="--d:40ms"><div class="frame-top"><span class="letter">B</span><h3>Le faux</h3></div>
+        <ul class="shots">
+          <li><span class="dot"></span><span>Ki-Jung qui retouche un tampon officiel pixel par pixel <span class="sc">S7</span></span></li>
+          <li><span class="dot"></span><span>Le père qui admire le faux diplôme couché sur la pierre <span class="sc">S8</span></span></li>
+        </ul><p class="tone">Artisanat de l'imposture</p></article>
+
+      <article class="card frame" data-reveal style="--d:80ms"><div class="frame-top"><span class="letter">C</span><h3>Monter</h3></div>
+        <ul class="shots">
+          <li><span class="dot"></span><span>Ki-Woo seul dans la rue en pente, hauts murs <span class="sc">S9</span></span></li>
+          <li><span class="pick" title="Shortlist 2">2</span><span>Le portail en haut des marches, la sonnette mélodieuse <span class="sc">S10</span></span></li>
+          <li><span class="dot"></span><span>Le jardin qui s'ouvre <span class="sc">S10</span></span></li>
+        </ul><p class="tone">Émerveillement inquiet</p></article>
+
+      <article class="card frame" data-reveal style="--d:120ms"><div class="frame-top"><span class="letter">D</span><h3>Le pouls</h3></div>
+        <ul class="shots">
+          <li><span class="dot"></span><span>Ki-Woo qui saisit le poignet de Da-Hae pendant l'examen <span class="sc">S14</span></span></li>
+          <li><span class="dot"></span><span>La marque rose qui reste sur la peau</span></li>
+        </ul><p class="tone">Pouvoir et séduction</p></article>
+
+      <article class="card frame" data-reveal><div class="frame-top"><span class="letter">E</span><h3>Les pêches</h3></div>
+        <ul class="shots">
+          <li><span class="dot"></span><span>Duvet de pêche rasé au cutter dans un capuchon de stylo <span class="sc">S36</span></span></li>
+          <li><span class="pick" title="Shortlist 3">3</span><span>Duvet versé sur les épaules de la gouvernante <span class="sc">S37</span></span></li>
+          <li><span class="dot"></span><span>Mouchoir taché de sauce piquante tendu comme une preuve <span class="sc">S52</span></span></li>
+        </ul><p class="tone">Suspense hitchcockien d'objets minuscules</p></article>
+
+      <article class="card frame" data-reveal style="--d:40ms"><div class="frame-top"><span class="letter">F</span><h3>Chez nous</h3></div>
+        <ul class="shots">
+          <li><span class="dot"></span><span>Les quatre Kim affalés dans le salon, whisky, pluie derrière la vitre <span class="sc">S70</span></span></li>
+          <li><span class="dot"></span><span>Ki-Jung dans le bain moussant devant la télé <span class="sc">S67</span></span></li>
+        </ul><p class="tone">Le bonheur volé, en plan large</p></article>
+
+      <article class="card frame" data-reveal style="--d:80ms"><div class="frame-top"><span class="letter">G</span><h3>La porte d'acier</h3></div>
+        <ul class="shots">
+          <li><span class="dot"></span><span>L'ancienne gouvernante sous la pluie, un œil gonflé, à l'interphone <span class="sc">S70-S71</span></span></li>
+          <li><span class="pick" title="Shortlist 4">4</span><span>Le meuble à bocaux qui glisse, la porte cachée <span class="sc">S74</span></span></li>
+          <li><span class="dot"></span><span>Un visage blafard dans le noir, un biberon <span class="sc">S75</span></span></li>
+        </ul><p class="tone">Basculement de genre</p></article>
+
+      <article class="card frame" data-reveal style="--d:120ms"><div class="frame-top"><span class="letter">H</span><h3>Sous la table</h3></div>
+        <ul class="shots">
+          <li><span class="dot"></span><span>Trois corps tassés sous la table basse, les pieds de Da-Hae à quelques centimètres <span class="sc">S94</span></span></li>
+          <li><span class="dot"></span><span>Les Park enlacés sur le canapé au-dessus</span></li>
+        </ul><p class="tone">Humiliation silencieuse</p></article>
+
+      <article class="card frame" data-reveal><div class="frame-top"><span class="letter">I</span><h3>Descendre</h3></div>
+        <ul class="shots">
+          <li><span class="pick" title="Shortlist 5">5</span><span>Escaliers de la ville sous l'averse, trois silhouettes trempées <span class="sc">S100-S101</span></span></li>
+          <li><span class="dot"></span><span>La rue inondée, un voisin qui écope au seau <span class="sc">S102</span></span></li>
+          <li><span class="dot"></span><span>Ki-Jung assise sur les toilettes qui débordent, cigarette allumée <span class="sc">S104</span></span></li>
+          <li><span class="dot"></span><span>Ki-Woo qui serre la pierre sortie de l'eau <span class="sc">S105</span></span></li>
+        </ul><p class="tone">Déluge, contrepoint du salon</p></article>
+
+      <article class="card frame" data-reveal style="--d:40ms"><div class="frame-top"><span class="letter">J</span><h3>Le morse</h3></div>
+        <ul class="shots">
+          <li><span class="pick" title="Shortlist 6">6</span><span>Les lumières de l'entrée qui clignotent quand Dong-Ik rentre <span class="sc">S88</span></span></li>
+          <li><span class="dot"></span><span>Un front ensanglanté contre les interrupteurs <span class="sc">S108</span></span></li>
+          <li><span class="dot"></span><span>Da-Song dans son tipi qui note des points et des traits <span class="sc">S109</span></span></li>
+        </ul><p class="tone">Appel au secours que personne ne lit</p></article>
+
+      <article class="card frame" data-reveal style="--d:80ms"><div class="frame-top"><span class="letter">K</span><h3>La fête</h3></div>
+        <ul class="shots">
+          <li><span class="dot"></span><span>Tables en arc autour du tipi, invités en lin, vin blanc <span class="sc">S123</span></span></li>
+          <li><span class="dot"></span><span>Gâteau à la crème porté par Ki-Jung, bougies allumées <span class="sc">S132</span></span></li>
+          <li><span class="dot"></span><span>Un visage à moitié couvert de crème et de sang <span class="sc">S132</span></span></li>
+        </ul><p class="tone">Soleil et carnage</p></article>
+
+      <article class="card frame" data-reveal style="--d:120ms"><div class="frame-top"><span class="letter">L</span><h3>Le nez</h3></div>
+        <ul class="shots">
+          <li><span class="pick" title="Shortlist 7">7</span><span>Dong-Ik qui se pince le nez en ramassant les clés <span class="sc">S132</span></span></li>
+          <li><span class="dot"></span><span>Le regard de Ki-Tek</span></li>
+        </ul><p class="tone">Le geste minuscule qui fait tout basculer</p></article>
+
+      <article class="card frame last" data-reveal><div class="frame-top"><span class="letter">M</span><h3>La lettre</h3></div>
+        <ul class="shots">
+          <li><span class="dot"></span><span>Ki-Woo sur la colline enneigée, télescope pointé sur la maison <span class="sc">S140</span></span></li>
+          <li><span class="dot"></span><span>Morse transcrit au marqueur sur un sac de pharmacie, puis sur son jean <span class="sc">S141</span></span></li>
+          <li><span class="dot"></span><span>Ki-Tek barbu, à la lampe, qui code sa lettre <span class="sc">S142</span></span></li>
+        </ul><p class="tone">Espoir sans destinataire</p></article>
+    </div>
+  </section>
+
+  <!-- ================= 05 · LE TON ================= -->
+  <section class="part" id="ton" aria-labelledby="h-ton">
+    <div class="head">
+      <span class="n mono">05</span>
+      <h2 class="display" id="h-ton">Le ton</h2>
+      <p class="lead">Le mot plan revient du début à la fin et structure le récit. Le père le renie, le fils le reprend.</p>
+    </div>
+
+    <div class="duo" data-reveal>
+      <figure class="line"><figcaption class="mono">Ki-Tek, au gymnase · <span class="sc">S110</span></figcaption><blockquote lang="en">Don't plan at all. Have no plan.</blockquote><p class="gloss">La philosophie de la défaite.</p></figure>
+      <figure class="line"><figcaption class="mono">Ki-Woo · <span class="sc">S154</span></figcaption><blockquote lang="en">Father. Today I made a plan.</blockquote><p class="gloss">Première ligne de la lettre.</p></figure>
+    </div>
+
+    <ul class="tone-notes" data-reveal>
+      <li><h3>Comédie d'abord</h3><p>Les répliques sont vives, souvent drôles, même au bord du gouffre.</p></li>
+      <li><h3>L'anglais, signe de classe</h3><p>Yon-Kyo glisse des mots anglais pour faire chic <span class="sc">S12, S18, S27</span>. Ki-Woo et Min-Hyuk le parlent couramment, sans raison <span class="sc">S6</span></p></li>
+      <li><h3>Des didascalies très écrites</h3><p>Le script commente, ironise et dirige le lecteur. Le ton de la mise en scène est déjà dans le texte.</p></li>
+    </ul>
+  </section>
+
+  <!-- ================= 06 · LES FINS ================= -->
+  <section class="part" id="fins" aria-labelledby="h-fins">
+    <div class="head">
+      <span class="n mono">06</span>
+      <h2 class="display" id="h-fins">Les fins</h2>
+      <p class="verdict">Le script choisit la fin la plus cruelle en écrivant d'abord la plus douce.</p>
+      <p class="lead">La fin B n'est pas une variante&nbsp;: elle est le moteur émotionnel de la fin A.</p>
+    </div>
+
+    <div class="main-ends">
+      <article class="card end" data-reveal>
+        <div class="end-top"><span class="L">A</span><h3>La lettre sans destinataire</h3><span class="state mono">La fin du film</span></div>
+        <ul class="steps">
+          <li>Ki-Woo déchiffre le morse de son père depuis la colline <span class="sc">S140-S141</span></li>
+          <li>Il écrit sa réponse&nbsp;: un plan, l'argent, la maison <span class="sc">S153-S154</span></li>
+          <li>Retour brutal&nbsp;: il est sur la colline, il ne sait pas comment envoyer la lettre <span class="sc">S159</span></li>
+        </ul>
+        <p class="meaning"><svg width="16" height="16"><use href="#i-arrow"/></svg><span>L'ascension sociale existe comme récit, pas comme trajectoire.</span></p>
+      </article>
+      <article class="card end" data-reveal style="--d:60ms">
+        <div class="end-top"><span class="L">B</span><h3>Le rachat de la maison</h3><span class="state mono">La fin rêvée</span></div>
+        <ul class="steps">
+          <li>Ki-Woo en costume, agents immobiliers, déménageurs <span class="sc">S156-S158</span></li>
+          <li>Une femme et une fillette dans le jardin, sa mère dans le salon</li>
+          <li>Le père remonte de la cave en plein soleil <span class="sc">S158</span></li>
+        </ul>
+        <p class="meaning"><svg width="16" height="16"><use href="#i-arrow"/></svg><span>La fin heureuse est écrite en entier, filmée en entier, puis annulée d'une coupe <span class="sc">S159</span></span></p>
+      </article>
+    </div>
+
+    <p class="mono aborted-label">Envisagées par les personnages, puis abandonnées</p>
+    <div class="aborted">
+      <article class="end" data-reveal>
+        <div class="end-top"><span class="L">C</span><h3>L'accord</h3></div>
+        <p>Le lendemain du déluge, Chung-Sook et Ki-Jung veulent descendre négocier avec le couple du bunker, un plateau de nourriture à la main <span class="sc">S126</span>. Yon-Kyo et son gâteau les interrompent.</p>
+        <p class="meaning"><svg width="16" height="16"><use href="#i-arrow"/></svg><span>La solidarité entre pauvres était possible&nbsp;; la fête des riches l'a empêchée.</span></p>
+      </article>
+      <article class="end" data-reveal style="--d:60ms">
+        <div class="end-top"><span class="L">D</span><h3>Le meurtre de la gouvernante</h3></div>
+        <p>Ki-Woo descend avec la pierre pour tuer Mun-Kwang <span class="sc">S127-S128</span>. Il n'y arrive pas.</p>
+        <p class="meaning"><svg width="16" height="16"><use href="#i-arrow"/></svg><span>Ki-Woo n'est pas un tueur. C'est l'autre pauvre qui frappera avec la pierre.</span></p>
+      </article>
+      <article class="end" data-reveal style="--d:120ms">
+        <div class="end-top"><span class="L">E</span><h3>Le maître remercié</h3></div>
+        <p>Kun-Sae demande à rester <span class="sc">S91</span>&nbsp;: il aime le bunker. S'il était resté oublié, aucun sang n'aurait coulé.</p>
+        <p class="meaning"><svg width="16" height="16"><use href="#i-arrow"/></svg><span>La paix sociale repose sur un homme enterré qui dit merci.</span></p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= 07 · NON-DITS ================= -->
+  <section class="part" id="non-dits" aria-labelledby="h-nondits">
+    <div class="head">
+      <span class="n mono">07</span>
+      <h2 class="display" id="h-nondits">Ce que le script ne dit pas</h2>
+    </div>
+    <ol class="open" data-reveal>
+      <li><span class="q">?</span><span>Ce que devient Da-Hae, et si elle a su qui était Kevin.</span></li>
+      <li><span class="q">?</span><span>Ce que Ki-Jung savait vraiment faire&nbsp;: elle échoue au concours d'art mais forge à la perfection.</span></li>
+      <li><span class="q">?</span><span>Comment Ki-Tek survit au-delà de la lettre.</span></li>
+      <li><span class="q">?</span><span>Si Ki-Woo enverra un jour sa propre réponse <span class="sc">S159</span></span></li>
+    </ol>
+  </section>
+
+  <!-- ================= 08 · RÉFÉRENCES ================= -->
+  <section class="part" id="references" aria-labelledby="h-refs">
+    <div class="head">
+      <span class="n mono">08</span>
+      <h2 class="display" id="h-refs">Références</h2>
+    </div>
+
+    <div class="refs">
+      <div data-reveal>
+        <h3>Équipe</h3>
+        <ul class="crew">
+          <li><span class="r">Réalisation</span><span><b>Bong Joon Ho</b>, aussi auteur de <em>Memories of Murder</em>, <em>The Host</em>, <em>Snowpiercer</em>, <em>Okja</em></span></li>
+          <li><span class="r">Image</span><span><b>Hong Kyung-pyo</b></span></li>
+          <li><span class="r">Décors</span><span><b>Lee Ha-jun</b>. La maison a été construite en décor, elle n'existe pas.</span></li>
+          <li><span class="r">Musique</span><span><b>Jung Jae-il</b></span></li>
+        </ul>
+      </div>
+
+      <div data-reveal style="--d:60ms">
+        <h3>Reconnaissance</h3>
+        <ul>
+          <li><b>Palme d'or</b>, Festival de Cannes 2019</li>
+          <li><b>Oscars 2020</b>&nbsp;: meilleur film, le premier film non anglophone à le recevoir. Aussi réalisation, scénario original, film international.</li>
+        </ul>
+      </div>
+
+      <div data-reveal>
+        <h3>Filiations</h3>
+        <ul>
+          <li><b>Kim Ki-young, <em>La Servante</em></b> (1960). Une famille bourgeoise, une domestique, un escalier. Référence revendiquée par Bong.</li>
+          <li><b>Le film de cambriolage</b>. Recrutement, plan en phases <span class="sc">S24</span>, répétitions <span class="sc">S41-S45</span></li>
+          <li><b>Le film de maison hantée</b>. Le fantôme de Da-Song, les lumières qui clignotent, la cave.</li>
+          <li><b>Le thriller hitchcockien</b>. Le suspense par les objets&nbsp;: duvet de pêche, culotte, mouchoir.</li>
+        </ul>
+      </div>
+
+      <div data-reveal style="--d:60ms">
+        <h3>Motifs à suivre</h3>
+        <ul>
+          <li><b>La pierre</b> (suiseki). Cadeau porte-bonheur, oreiller, trésor sauvé des eaux, arme <span class="sc">S5, S105, S128</span></li>
+          <li><b>Le morse</b>. Appris chez les scouts, utilisé par les enterrés.</li>
+          <li><b>Le costume d'Indien</b>. Da-Song joue au bon Indien, les deux pères sont déguisés en méchants <span class="sc">S125</span></li>
+        </ul>
+      </div>
+
+      <div data-reveal>
+        <h3>Musique</h3>
+        <ul>
+          <li><b>The Belt of Trust</b>, thème nommé dans le script pour la séquence d'infiltration <span class="sc">S27-S52</span></li>
+          <li><b>Une aria d'opéra</b> sur l'infiltration réussie <span class="sc">S60-S61</span>, chantée à la fête <span class="sc">S129</span></li>
+          <li><b>La chanson du générique</b>, écrite par Bong Joon Ho, chantée par Choi Woo-shik.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="page">
+    <p>The Soft War est un outil de Mecene, le site qui trouve les aides et subventions adaptées aux artistes. · <a href="https://mecene.io" target="_top">mecene.io</a></p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Apparition au premier passage seulement
+  if ('IntersectionObserver' in window && !reduce) {
+    root.classList.add('js');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+  }
+
+  // Section active dans la barre
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
+  var byId = {};
+  links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+  var nav = document.querySelector('.nav');
+  function setActive(id) {
+    links.forEach(function (a) { a.removeAttribute('aria-current'); });
+    var a = byId[id];
+    if (!a) return;
+    a.setAttribute('aria-current', 'true');
+    var l = a.offsetLeft, r = l + a.offsetWidth;
+    if (l < nav.scrollLeft || r > nav.scrollLeft + nav.clientWidth) {
+      nav.scrollTo({ left: l - 12, behavior: reduce ? 'auto' : 'smooth' });
+    }
+  }
+  if ('IntersectionObserver' in window) {
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) setActive(e.target.id); });
+    }, { rootMargin: '-30% 0px -65% 0px' });
+    document.querySelectorAll('section.part[id]').forEach(function (s) { spy.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
