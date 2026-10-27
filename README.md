@@ -11,7 +11,7 @@ Two open-source tools for screenwriters, in one repo:
 
 ## The soft War
 
-Built with Next.js 16 + Mastra + Anthropic Claude + BullMQ on Railway.
+Built with Next.js 16 + Anthropic Claude + BullMQ on Railway.
 
 ## What it does
 
@@ -37,13 +37,12 @@ The pipeline replicates the manual work done for the short film *Nothing But Blu
 ## Stack
 
 - **Frontend** — Next.js 16 App Router + Tailwind 4 + shadcn/ui
-- **Auth** — Lucia + magic link via Resend (admin only)
+- **Auth** — magic link via Resend (admin only)
 - **DB** — Postgres + Drizzle ORM
 - **Queue** — Redis + BullMQ
 - **Worker** — Node.js standalone (`/worker`)
-- **LLM orchestration** — Mastra (TypeScript-first)
 - **LLM** — Anthropic Claude (with prompt caching)
-- **Render** — MDX + Next.js SSR (no static export — the repo updates, all dashboards follow)
+- **Render** — Next.js SSR (no static export — the repo updates, all dashboards follow)
 
 ## Local setup
 

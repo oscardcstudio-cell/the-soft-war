@@ -65,3 +65,10 @@ Thumbs.db
 # Drizzle local journal
 drizzle/meta/_journal.json.bak
 *.pdf
+
+# Misc tooling
+.playwright-mcp/
+.cache/
+dist/
+*.log
+desktop.ini

@@ -7,22 +7,29 @@
 - README.md — pitch + setup local
 - .env.example — variables d'env requises
 
+## Gros fichiers (> 300 lignes)
+- src/app/p/[slug]/submit-overlay.tsx — overlay d'envoi de script sur la page projet
+- src/app/p/[slug]/dashboard.css — styles du dashboard rendu
+
+## Gotchas
+- MEMORY.md §Gotchas — liste maintenue
+- @emnapi/* sont des dépendances directes volontaires (lockfile Linux/Railway), ne pas les retirer
+
 ## Stack
 - Next.js 16 App Router + TypeScript + Tailwind 4
 - Drizzle ORM + Postgres
-- Lucia + magic link (Resend)
+- magic link (Resend)
 - BullMQ + Redis + worker Node.js
-- Mastra (orchestration LLM TypeScript-first)
 - Anthropic SDK (avec prompt caching)
-- mammoth + pdf-parse + fountain-js (extraction texte)
-- MDX + SSR Next.js (dashboard render)
+- extraction texte (.docx/.pdf/.fountain) : module extract pas encore écrit, dépendances à réinstaller à ce moment-là
+- SSR Next.js (dashboard render)
 
 ## Dossiers
 - src/app/ — routes Next.js (admin, public /p/[slug], api)
-- src/lib/{db,auth,queue,mastra,utils}/ — clients infra
+- src/lib/{db,auth,queue,mastra,notes,projects,utils}/ — clients infra (mastra/ = client Anthropic seul)
 - src/modules/ — 10 modules pipeline indépendants
 - worker/ — worker BullMQ standalone
-- drizzle/ — migrations DB
+- drizzle/ — migrations DB (générées par `npm run db:generate`, absent tant qu'aucune migration n'est créée)
 - projects/<slug>/ — bibles générées (.md + dashboard.html optionnel)
 - sources/ — provenance et droits des scripts de démo (jamais le texte protégé)
 - intellectual-source/ — second outil : agent Claude Code de lecture critique (cinéma d'auteur)

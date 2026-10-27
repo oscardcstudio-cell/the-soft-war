@@ -1,3 +1,5 @@
+> Hiérarchie : hérite de C:\dev\claude\CLAUDE.md et C:\dev\claude\oscardcstudio\CLAUDE.md
+
 # CLAUDE.md — The soft War
 
 App web qui prend un script de film en entrée et produit toute la bible de développement (worldbuilding, personnages, lieux, pool teaser, fragments, fins, refs, dashboard) sur une **page web partageable**.
@@ -12,14 +14,13 @@ Repo public : [github.com/oscardcstudio-cell/the-soft-war](https://github.com/os
 ## Stack
 
 - **Frontend** : Next.js 16 App Router + Tailwind 4 + shadcn/ui
-- **Auth admin** : Lucia + magic link (Resend)
+- **Auth admin** : magic link maison (Resend)
 - **DB** : Postgres + Drizzle ORM
 - **Queue** : Redis + BullMQ
 - **Worker** : Node.js standalone (`/worker`)
-- **Orchestration LLM** : Mastra (TypeScript-first)
 - **LLM** : Anthropic SDK + prompt caching activé
-- **Extraction** : mammoth (.docx), pdf-parse (.pdf), fountain-js (.fountain)
-- **Render dashboard** : MDX + SSR Next.js (pas de static export → vue toujours à jour)
+- **Extraction** (.docx/.pdf/.fountain) : module `extract` pas encore écrit ; ajouter alors les libs nécessaires (mammoth, pdf-parse, fountain-js retirés du package.json faute d'usage)
+- **Render dashboard** : SSR Next.js (pas de static export → vue toujours à jour)
 - **Déploiement** : Railway (4 services : web, worker, redis, postgres)
 
 ## Périmètre
