@@ -80,10 +80,6 @@ railway link
 railway up
 ```
 
-## License
-
-MIT — but the prompts are the value. Fork freely.
-
 ---
 
 Built by [Oscar de Canecaude](https://www.odcstudio.fr/).
