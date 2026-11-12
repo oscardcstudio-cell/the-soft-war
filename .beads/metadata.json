@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "the_soft_war",
+  "project_id": "6f92d266-98bc-4009-905c-304c6944f0fd"
+}
