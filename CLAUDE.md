@@ -62,3 +62,6 @@ L'utilisateur **coche** les modules à lancer. Chaque module est relançable ind
 - Prompt caching Anthropic activé dès le départ (le system prompt worldbuilder est stable)
 - VR en horizon long terme : ne pas fermer la porte (cf. décision NBS/C6)
 - **SSR Next.js** sur `/p/[slug]` (pas static export) : le repo se met à jour, tous les dashboards déjà créés suivent
+
+## Tâches = Beads
+Les tâches restantes vivent dans Beads (`bd ready`, `bd list`), pas dans un fichier de notes. Une tâche finie : `bd close <id>`.
